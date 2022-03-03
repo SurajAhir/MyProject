@@ -1,0 +1,62 @@
+  private void checkDeviceLocationTurnOn() {
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(2000);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true);
+
+        Task<LocationSettingsResponse> result = LocationServices.getSettingsClient(getApplicationContext())
+                .checkLocationSettings(builder.build());
+
+        result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
+            @Override
+            public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
+
+                try {
+                    LocationSettingsResponse response = task.getResult(ApiException.class);
+                    getCurrentLocation();
+                    Toast.makeText(MainActivity.this, "GPS is already tured on", Toast.LENGTH_SHORT).show();
+
+                } catch (ApiException e) {
+
+                    switch (e.getStatusCode()) {
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+
+                            try {
+                                ResolvableApiException resolvableApiException = (ResolvableApiException)e;
+                                resolvableApiException.startResolutionForResult(MainActivity.this,REQUEST_CHECK_SETTINGS);
+                            } catch (IntentSender.SendIntentException ex) {
+                                ex.printStackTrace();
+                            }
+                            break;
+
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            //Device does not have location
+                            break;
+                    }
+                }
+            }
+        });
+
+    }
+    
+   @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CHECK_SETTINGS) {
+
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    Toast.makeText(this, "GPS is tured on", Toast.LENGTH_SHORT).show();
+                    getCurrentLocation();
+                    break;
+                case Activity.RESULT_CANCELED:
+                    Toast.makeText(this, "GPS required to be tured on", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    }
