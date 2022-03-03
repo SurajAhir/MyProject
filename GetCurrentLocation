@@ -1,0 +1,43 @@
+
+FusedLocationProviderClient fusedLocationProviderClient;  //this is variable,declare it globaly inside the activity
+
+ public void getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+           Log.d("TAG","return ");
+            return;
+        }
+        Task<Location> task = fusedLocationProviderClient.getLastLocation();
+        task.addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                Log.d("TAG",location+" h ye meri");
+
+                    supportMapFragment.getMapAsync(new OnMapReadyCallback() {
+                        @Override
+                        public void onMapReady(@NonNull GoogleMap googleMap) {
+                           MainActivity.this.googleMap=googleMap;
+                            LatLng latLng=new LatLng(location.getLatitude(),location.getLongitude());
+                            MarkerOptions options=new MarkerOptions().position(latLng).title("Current Position");
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                            googleMap.addMarker(options);
+
+           \************    
+           ArrayList<LatLng> list1=new ArrayList<>();
+                                list1.add(new LatLng(29.970912805506323, 76.87572125258492));
+                                list1.add(new LatLng(29.979804660863547, 76.889033688676));
+                                list1.add(new LatLng(29.78172414509632, 76.40433244479465));
+                                list1.add(new LatLng(30.376403045843414, 76.78293536345275));
+           
+           for (int i=0;i<list1.size();i++){
+                                MarkerOptions options=new MarkerOptions().position(list1.get(i)).title("Current Position");
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(list1.get(i),10));
+                            googleMap.addMarker(options);
+                            }
+                            
+                           *************/ this is for if you want to add multiple markers in your map
+                        }
+                    });
+
+            }
+        });
+    }
