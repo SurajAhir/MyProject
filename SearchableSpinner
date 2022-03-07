@@ -1,0 +1,7 @@
+    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+        android:layout_width="0dp"
+        android:layout_weight="9"
+        android:id="@+id/spinner"
+        app:hintText="Select State"
+        android:layout_marginLeft="8dp"
+        android:layout_height="match_parent" />  \**********implementation 'com.toptoche.searchablespinner:searchablespinnerlibrary:1.3.1' ***************/
