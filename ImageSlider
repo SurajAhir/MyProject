@@ -1,0 +1,140 @@
+<com.smarteist.autoimageslider.SliderView
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    app:sliderAnimationDuration="600"
+    app:sliderAutoCycleEnabled="true"
+    android:layout_margin="10dp"
+    app:sliderIndicatorAnimationDuration="600"
+    app:sliderIndicatorGravity="center_horizontal|bottom"
+    app:sliderIndicatorMargin="15dp"
+    app:sliderIndicatorOrientation="horizontal"
+    app:sliderIndicatorPadding="3dp"
+    app:sliderIndicatorRadius="2dp"
+    app:sliderIndicatorSelectedColor="#F50A0A"
+    app:sliderIndicatorUnselectedColor="@color/white"
+    app:sliderStartAutoCycle="true"
+    android:id="@+id/image_slider"/>
+    
+    /****************you have to add a custom layout file like in recyclerview*******************/
+    
+    <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!--Image we will display is our slider view-->
+    <ImageView
+        android:id="@+id/myimage"
+        android:layout_width="400dp"
+        android:layout_height="300dp"
+        android:src="@drawable/profile_logo"
+        android:layout_centerHorizontal="true"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/app_name" />
+</RelativeLayout>
+
+/*****************also you have to add custom slide Adapter like in recyclerview***************************//
+
+package com.example.fineclub;
+
+import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import com.smarteist.autoimageslider.SliderViewAdapter;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class SliderAdapter extends SliderViewAdapter<SliderAdapter.SliderAdapterViewHolder> {
+Context context;
+    // list for storing urls of images.
+    int[] images;
+
+    // Constructor
+    public SliderAdapter(Context context, int[] images) {
+        this.images=images;
+        this.context=context;
+    }
+
+    // We are inflating the slider_layout
+    // inside on Create View Holder method.
+    @Override
+    public SliderAdapterViewHolder onCreateViewHolder(ViewGroup parent) {
+        View inflate = LayoutInflater.from(context).inflate(R.layout.slider_layout, parent,false);
+        return new SliderAdapterViewHolder(inflate);
+    }
+
+    // Inside on bind view holder we will
+    // set data to item of Slider View.
+    @Override
+    public void onBindViewHolder(SliderAdapterViewHolder viewHolder, final int position) {
+
+        Picasso.get().load(images[position]).placeholder(R.drawable.profile_logo).into(viewHolder.imageViewBackground);
+    }
+
+    // this method will return
+    // the count of our list.
+    @Override
+    public int getCount() {
+        return images.length;
+    }
+
+    static class SliderAdapterViewHolder extends SliderViewAdapter.ViewHolder {
+        // Adapter class for initializing
+        // the views of our slider view.
+        View itemView;
+        ImageView imageViewBackground;
+
+        public SliderAdapterViewHolder(View itemView) {
+            super(itemView);
+            imageViewBackground = itemView.findViewById(R.id.myimage);
+            this.itemView = itemView;
+        }
+    }
+}
+
+/********************Main activity Work***********************************/
+
+ SliderView sliderView;
+    int[] images={R.drawable.image2,R.drawable.image3,R.drawable.image4,R.drawable.image5,R.drawable.image6};
+    
+    
+    
+    
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view= inflater.inflate(R.layout.fragment_home, container, false);
+
+        sliderView = view.findViewById(R.id.image_slider);
+
+        // passing this array list inside our adapter class.
+        SliderAdapter adapter = new SliderAdapter(getContext(),images);
+
+        // below method is used to set auto cycle direction in left to
+        // right direction you can change according to requirement.
+        sliderView.setAutoCycleDirection(SliderView.LAYOUT_DIRECTION_LTR);
+
+        // below method is used to
+        // setadapter to sliderview.
+        sliderView.setSliderAdapter(adapter);
+
+        // below method is use to set
+        // scroll time in seconds.
+        sliderView.setScrollTimeInSec(3);
+
+        // to set it scrollable automatically
+        // we use below method.
+        sliderView.setAutoCycle(true);
+
+        // to start autocycle below method is used.
+        sliderView.startAutoCycle();
+return view;
+    }
+}
