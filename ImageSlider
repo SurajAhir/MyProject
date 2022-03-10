@@ -1,3 +1,5 @@
+//*************************implementation 'com.github.smarteist:autoimageslider:1.4.0'*********************/
+
 <com.smarteist.autoimageslider.SliderView
     android:layout_width="match_parent"
     android:layout_height="150dp"
