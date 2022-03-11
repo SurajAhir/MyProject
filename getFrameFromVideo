@@ -6,7 +6,7 @@
         videoThumbnail.setImageBitmap(bmp);
         Log.d("TAG",bmp+"");
        
-       /***********this is method for getting output***************/
+       /***********this is method for getting output***************and{ getFrameAtTime() }method takes time in microseconds***************/
           public Bitmap retriveVideoFrameFromVideo(String videoPath) {
         Bitmap bitmap = null;
         MediaMetadataRetriever mediaMetadataRetriever = null;
