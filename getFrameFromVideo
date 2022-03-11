@@ -6,25 +6,4 @@
         videoThumbnail.setImageBitmap(bmp);
         Log.d("TAG",bmp+"");
        
-       /***********this is method for getting output***************and{ getFrameAtTime() }method takes time in microseconds***************/
-          public Bitmap retriveVideoFrameFromVideo(String videoPath) {
-        Bitmap bitmap = null;
-        MediaMetadataRetriever mediaMetadataRetriever = null;
-        try {
-            mediaMetadataRetriever = new MediaMetadataRetriever();
-            if (Build.VERSION.SDK_INT >= 14)
-                mediaMetadataRetriever.setDataSource(videoPath, new HashMap<String, String>());
-            else
-                mediaMetadataRetriever.setDataSource(videoPath);
-            //   mediaMetadataRetriever.setDataSource(videoPath);
-            bitmap = mediaMetadataRetriever.getFrameAtTime(1, MediaMetadataRetriever.OPTION_CLOSEST);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-        } finally {
-            if (mediaMetadataRetriever != null) {
-                mediaMetadataRetriever.release();
-            }
-        }
-        return bitmap;
-    }
+      /**********in this getFrameAtTime() method takes time in microseconds************/
