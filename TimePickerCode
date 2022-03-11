@@ -1,0 +1,39 @@
+/***********************Method-1****************************/
+
+ TimePickerDialog timePickerDialog=new TimePickerDialog(EditShift.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+                        startTimeHour=i;
+                        startTimeMinute=i1;
+                        Log.d("Time",startTimeHour+":"+startTimeMinute+"");
+                        String time=startTimeHour+ ":" +startTimeMinute;
+                        SimpleDateFormat f24Hours=new SimpleDateFormat("HH:mm");
+                        try {
+                            Date date=f24Hours.parse(time);
+                            SimpleDateFormat f12Hours=new SimpleDateFormat("hh:mm aa");
+                            endTime.setText(f12Hours.format(date));
+                            Log.d("Time",endTime.getText().toString());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                },12,0,false);
+                timePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                timePickerDialog.updateTime(startTimeHour,startTimeMinute);
+                timePickerDialog.show();
+                
+                /******************************Method-2*************************/////
+                
+                TimePickerDialog timePickerDialog=new TimePickerDialog(EditShift.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+                        startTimeHour=i;
+                        startTimeMinute=i1;
+                        Calendar calendar=Calendar.getInstance();
+                        calendar.set(0,0,0,startTimeHour,startTimeMinute);
+                        startTime.setText(DateFormat.format("hh:mm:aa",calendar));
+                    }
+                },12,0,false);
+                timePickerDialog.updateTime(startTimeHour,startTimeMinute);
+                timePickerDialog.show();
