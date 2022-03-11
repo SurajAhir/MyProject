@@ -1,0 +1,30 @@
+/******************* implementation  'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'*****************/ 
+ 
+ FFmpegMediaMetadataRetriever med = new FFmpegMediaMetadataRetriever();
+ med.setDataSource("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+  Bitmap bmp = med.getFrameAtTime(19*1000*1000, FFmpegMediaMetadataRetriever.OPTION_CLOSEST);
+        videoThumbnail.setImageBitmap(bmp);
+        Log.d("TAG",bmp+"");
+       
+       /***********this is method for getting output***************/
+          public Bitmap retriveVideoFrameFromVideo(String videoPath) {
+        Bitmap bitmap = null;
+        MediaMetadataRetriever mediaMetadataRetriever = null;
+        try {
+            mediaMetadataRetriever = new MediaMetadataRetriever();
+            if (Build.VERSION.SDK_INT >= 14)
+                mediaMetadataRetriever.setDataSource(videoPath, new HashMap<String, String>());
+            else
+                mediaMetadataRetriever.setDataSource(videoPath);
+            //   mediaMetadataRetriever.setDataSource(videoPath);
+            bitmap = mediaMetadataRetriever.getFrameAtTime(1, MediaMetadataRetriever.OPTION_CLOSEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        } finally {
+            if (mediaMetadataRetriever != null) {
+                mediaMetadataRetriever.release();
+            }
+        }
+        return bitmap;
+    }
