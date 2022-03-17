@@ -1,0 +1,19 @@
+
+//*******************you can pass direct latitude and longitue to this  function*********************/
+ private void DisplayTrack(String panchkula, String barwala) {
+        try{
+        //this work if map installed in your phone
+            Uri uri= Uri.parse("https://www.google.co.in/maps/dir/"+panchkula+"/"+barwala);
+            Intent intent=new Intent(Intent.ACTION_VIEW,uri);
+            intent.setPackage("com.google.android.apps.maps");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }catch (Exception e){
+        
+       //this work if map not installed in your phone and send the user to playstore**********************/
+            Uri uri=Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.apps.maps");
+            Intent intent=new Intent(Intent.ACTION_VIEW,uri);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+    }
