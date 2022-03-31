@@ -1,0 +1,7 @@
+String s="Now<br />\n<blockquote class=\"xfBb-quote\" data-name=\"jatinkrmalik\">We can't really have a forum without allowing members to share their"
+              + " credit card portfolios and talk about their favourite credit car</blockquote>Now show off time 🤔🤣";
+
+s = s.substring(s.indexOf("\">") + 2);
+s = s.substring(0, s.indexOf("</blockquote>"));
+    System.out.println("true");
+System.out.println(s);
