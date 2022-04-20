@@ -1,0 +1,5 @@
+ var date = Date((list.get(position).post_date as Long) * 1000)
+        var simple = SimpleDateFormat("dd yyyy")
+        holder.date.setText("${DateFormatSymbols().getShortMonths()[date.month]} ${
+            simple.format(date)
+        }")
