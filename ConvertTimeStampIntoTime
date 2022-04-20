@@ -34,9 +34,9 @@ var lastActivityDate = Date((conversation.start_date as Long) * 1000)
             }
         }
         else {
-            if (currentTime.year - lastActivityDate.year < 2) {
-                binding.showAndReplyConversationLastTimeTv.setText("${currentTime.year - lastActivityDate.year} year ago")
+            if ((currentTime.year-100) - (lastActivityDate.year-100) < 2) {
+                binding.showAndReplyConversationLastTimeTv.setText("${(currentTime.year-100) - (lastActivityDate.year-100)} year ago")
             } else {
-                binding.showAndReplyConversationLastTimeTv.setText("${currentTime.year - lastActivityDate.year} years ago")
+                binding.showAndReplyConversationLastTimeTv.setText("${(currentTime.year-100) - (lastActivityDate.year-100)} years ago")
             }
         }
