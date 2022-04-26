@@ -1,0 +1,540 @@
+/************Java Code***********************/and dependency(implementation 'jp.wasabeef:richeditor-android:2.0.0')
+
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import jp.wasabeef.richeditor.RichEditor;
+
+public class MainActivity extends AppCompatActivity {
+
+  private RichEditor mEditor;
+  private TextView mPreview;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+    mEditor = (RichEditor) findViewById(R.id.editor);
+    mEditor.setEditorHeight(200);
+    mEditor.setEditorFontSize(22);
+    mEditor.setEditorFontColor(Color.RED);
+    //mEditor.setEditorBackgroundColor(Color.BLUE);
+    //mEditor.setBackgroundColor(Color.BLUE);
+    //mEditor.setBackgroundResource(R.drawable.bg);
+    mEditor.setPadding(10, 10, 10, 10);
+    //mEditor.setBackground("https://raw.githubusercontent.com/wasabeef/art/master/chip.jpg");
+    mEditor.setPlaceholder("Insert text here...");
+    //mEditor.setInputEnabled(false);
+
+    mPreview = (TextView) findViewById(R.id.preview);
+    mEditor.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
+      @Override
+      public void onTextChange(String text) {
+        mPreview.setText(text);
+      }
+    });
+
+    findViewById(R.id.action_undo).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.undo();
+      }
+    });
+
+    findViewById(R.id.action_redo).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.redo();
+      }
+    });
+
+    findViewById(R.id.action_bold).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setBold();
+      }
+    });
+
+    findViewById(R.id.action_italic).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setItalic();
+      }
+    });
+
+    findViewById(R.id.action_subscript).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setSubscript();
+      }
+    });
+
+    findViewById(R.id.action_superscript).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setSuperscript();
+      }
+    });
+
+    findViewById(R.id.action_strikethrough).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setStrikeThrough();
+      }
+    });
+
+    findViewById(R.id.action_underline).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setUnderline();
+      }
+    });
+
+    findViewById(R.id.action_heading1).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setHeading(1);
+      }
+    });
+
+    findViewById(R.id.action_heading2).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setHeading(2);
+      }
+    });
+
+    findViewById(R.id.action_heading3).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setHeading(3);
+      }
+    });
+
+    findViewById(R.id.action_heading4).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setHeading(4);
+      }
+    });
+
+    findViewById(R.id.action_heading5).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setHeading(5);
+      }
+    });
+
+    findViewById(R.id.action_heading6).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setHeading(6);
+      }
+    });
+
+    findViewById(R.id.action_txt_color).setOnClickListener(new View.OnClickListener() {
+      private boolean isChanged;
+
+      @Override
+      public void onClick(View v) {
+        mEditor.setTextColor(isChanged ? Color.BLACK : Color.RED);
+        isChanged = !isChanged;
+      }
+    });
+
+    findViewById(R.id.action_bg_color).setOnClickListener(new View.OnClickListener() {
+      private boolean isChanged;
+
+      @Override
+      public void onClick(View v) {
+        mEditor.setTextBackgroundColor(isChanged ? Color.TRANSPARENT : Color.YELLOW);
+        isChanged = !isChanged;
+      }
+    });
+
+    findViewById(R.id.action_indent).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setIndent();
+      }
+    });
+
+    findViewById(R.id.action_outdent).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setOutdent();
+      }
+    });
+
+    findViewById(R.id.action_align_left).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setAlignLeft();
+      }
+    });
+
+    findViewById(R.id.action_align_center).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setAlignCenter();
+      }
+    });
+
+    findViewById(R.id.action_align_right).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setAlignRight();
+      }
+    });
+
+    findViewById(R.id.action_blockquote).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setBlockquote();
+      }
+    });
+
+    findViewById(R.id.action_insert_bullets).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setBullets();
+      }
+    });
+
+    findViewById(R.id.action_insert_numbers).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.setNumbers();
+      }
+    });
+
+    findViewById(R.id.action_insert_image).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.insertImage("https://raw.githubusercontent.com/wasabeef/art/master/chip.jpg",
+          "dachshund", 320);
+      }
+    });
+
+    findViewById(R.id.action_insert_youtube).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.insertYoutubeVideo("https://www.youtube.com/embed/pS5peqApgUA");
+      }
+    });
+
+    findViewById(R.id.action_insert_audio).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.insertAudio("https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_5MG.mp3");
+      }
+    });
+
+    findViewById(R.id.action_insert_video).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.insertVideo("https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4", 360);
+      }
+    });
+
+    findViewById(R.id.action_insert_link).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.insertLink("https://github.com/wasabeef", "wasabeef");
+      }
+    });
+    findViewById(R.id.action_insert_checkbox).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mEditor.insertTodo();
+      }
+    });
+  }
+}
+
+
+/////**************************xml code***********************/
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <HorizontalScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/black">
+
+    <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content">
+
+      <ImageButton
+        android:id="@+id/action_undo"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/undo" />
+
+      <ImageButton
+        android:id="@+id/action_redo"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/redo" />
+
+      <ImageButton
+        android:id="@+id/action_bold"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/bold" />
+
+      <ImageButton
+        android:id="@+id/action_italic"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/italic" />
+
+      <ImageButton
+        android:id="@+id/action_subscript"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/subscript" />
+
+      <ImageButton
+        android:id="@+id/action_superscript"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/superscript" />
+
+      <ImageButton
+        android:id="@+id/action_strikethrough"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/strikethrough" />
+
+      <ImageButton
+        android:id="@+id/action_underline"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/underline" />
+
+      <ImageButton
+        android:id="@+id/action_heading1"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/h1" />
+
+      <ImageButton
+        android:id="@+id/action_heading2"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/h2" />
+
+      <ImageButton
+        android:id="@+id/action_heading3"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/h3" />
+
+      <ImageButton
+        android:id="@+id/action_heading4"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/h4" />
+
+      <ImageButton
+        android:id="@+id/action_heading5"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/h5" />
+
+      <ImageButton
+        android:id="@+id/action_heading6"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/h6" />
+
+      <ImageButton
+        android:id="@+id/action_txt_color"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/txt_color" />
+
+      <ImageButton
+        android:id="@+id/action_bg_color"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/bg_color" />
+
+
+      <ImageButton
+        android:id="@+id/action_indent"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/indent" />
+
+      <ImageButton
+        android:id="@+id/action_outdent"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/outdent" />
+
+      <ImageButton
+        android:id="@+id/action_align_left"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/justify_left" />
+
+      <ImageButton
+        android:id="@+id/action_align_center"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/justify_center" />
+
+      <ImageButton
+        android:id="@+id/action_align_right"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/justify_right" />
+
+      <ImageButton
+        android:id="@+id/action_insert_bullets"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/bullets" />
+
+      <ImageButton
+        android:id="@+id/action_insert_numbers"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/numbers" />
+
+      <ImageButton
+        android:id="@+id/action_blockquote"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/blockquote" />
+
+      <ImageButton
+        android:id="@+id/action_insert_image"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/insert_image" />
+
+      <ImageButton
+        android:id="@+id/action_insert_audio"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/music" />
+
+      <ImageButton
+        android:id="@+id/action_insert_video"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/video" />
+
+      <ImageButton
+        android:id="@+id/action_insert_youtube"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/youtube" />
+
+      <ImageButton
+        android:id="@+id/action_insert_link"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/insert_link" />
+
+      <ImageButton
+        android:id="@+id/action_insert_checkbox"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@android:drawable/checkbox_on_background" />
+
+    </LinearLayout>
+  </HorizontalScrollView>
+
+  <jp.wasabeef.richeditor.RichEditor
+    android:id="@+id/editor"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp"
+    android:text="HTML Preview"
+    android:textSize="12sp" />
+
+  <TextView
+    android:id="@+id/preview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="15dp" />
+
+</LinearLayout>
