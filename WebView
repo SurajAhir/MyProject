@@ -23,6 +23,7 @@ public class WebViewForInstagram extends AppCompatActivity {
         webView.loadUrl(INSTAGRAM_LOGIN_LINK);
         webView.setWebViewClient(new WebViewClientForUser());
         WebSettings settings=webView.getSettings();
+         settings.userAgentString="Chrome/56.0.0 Mobile"  /****************if authorisation error occured**************/
         settings.setAllowContentAccess(true);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
         settings.setJavaScriptEnabled(true);
