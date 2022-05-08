@@ -1,0 +1,53 @@
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Build;
+import android.os.Bundle;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+
+import com.example.instore.Fragments.Profile;
+
+public class WebViewForInstagram extends AppCompatActivity {
+   final String INSTAGRAM_LOGIN_LINK="https://www.instagram.com/accounts/login/?hl=en";
+   WebView webView;
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_web_view_for_instagram);
+        Profile.progressDialog.dismiss();
+        webView=findViewById(R.id.webView);
+        webView.loadUrl(INSTAGRAM_LOGIN_LINK);
+        webView.setWebViewClient(new WebViewClientForUser());
+        WebSettings settings=webView.getSettings();
+        settings.setAllowContentAccess(true);
+        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+        settings.setJavaScriptEnabled(true);
+        settings.setSupportMultipleWindows(true);
+        settings.setSupportZoom(true);
+        settings.setSafeBrowsingEnabled(true);
+        settings.setAllowContentAccess(true);
+        settings.setAllowFileAccessFromFileURLs(true);
+    }
+    class WebViewClientForUser extends WebViewClient{
+
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
+            return true;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(webView.canGoBack()){
+            webView.goBack();
+        }else{
+            super.onBackPressed();
+        }
+    }
+}
