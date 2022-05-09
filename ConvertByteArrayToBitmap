@@ -1,0 +1,21 @@
+  import android.util.Base64
+  
+  var byteArray = response.body()?.bytes()
+                            var base64 = Base64.encodeToString(byteArray, Base64.DEFAULT)
+                            var decodedString = Base64.decode(base64, Base64.DEFAULT)
+                            var bitmap = BitmapFactory.decodeByteArray(decodedString,
+                                0,
+                                decodedString.size)
+                                
+                                
+/*************and save file to disk**************/
+
+ private fun saveBitmap(bitmap: Bitmap?): String {
+        var path = Environment.getExternalStorageDirectory().absolutePath + "//file_name.png"
+        var file = File(path)
+        if (!file.exists()) {
+            file.createNewFile()
+            bitmap?.compress(Bitmap.CompressFormat.PNG, 100, FileOutputStream(file))
+        }
+        return path
+    }
