@@ -12,6 +12,8 @@ import com.example.instore.Fragments.Profile;
 
 public class WebViewForInstagram extends AppCompatActivity {
    final String INSTAGRAM_LOGIN_LINK="https://www.instagram.com/accounts/login/?hl=en";
+   var userAgent="Chrome/41.0.2228.0 Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 " +
+                "(KHTML, like Gecko) Safari/537.36"
    WebView webView;
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
