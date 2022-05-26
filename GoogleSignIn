@@ -1,0 +1,42 @@
+ lateinit var firebaseAuth:FirebaseAuth //initialize it
+ lateinit var gso: GoogleSignInOptions
+ lateinit var gsc: GoogleSignInClient
+ 
+ gso=GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
+ gsc= GoogleSignIn.getClient(this,gso)
+ firebaseAuth=FirebaseAuth.getInstance()
+ 
+ //call this method
+doSignIn(){
+  var intent=gsc.signInIntent
+  startActivityForResult(intent,100)
+  }
+  
+  
+  //and receive data
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    if(requestCode==100){
+        progressDialog.show()
+        var  task:Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
+        try {
+            task.getResult(ApiException::class.java)
+            var account: GoogleSignInAccount? =GoogleSignIn.getLastSignedInAccount(this)
+            if(account!=null)
+            {
+                var email:String?=account.email
+              
+        }catch (e: ApiException){
+            progressDialog.dismiss()
+            Log.e("TAG",e.localizedMessage)
+        }
+    }
+}
+
+//sign out call this method
+doSignOut(){
+Firebase.signOut()
+ gso=GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
+                gsc= activity?.let { GoogleSignIn.getClient(it,gso) }!!
+                gsc.signOut()
+   }
