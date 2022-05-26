@@ -1,0 +1,36 @@
+//Or you can go throw this link
+https://firebase.google.com/docs/auth/android/twitter-login
+
+private fun doTwitterLogin() {
+        val provider = OAuthProvider.newBuilder("twitter.com")
+        provider.addCustomParameter("lang", "fr")
+        val pendingResultTask: Task<AuthResult>? = firebaseAuth.getPendingAuthResult()
+        if (pendingResultTask != null) {
+            // There's something already here! Finish the sign-in for your user.
+            pendingResultTask
+                .addOnSuccessListener(
+                    OnSuccessListener<AuthResult?> {
+                        Log.d("TAG","done")
+                        progressDialog.show()
+                        var email:String?=it.additionalUserInfo?.username
+                       
+                       
+                        }
+                    })
+                .addOnFailureListener(
+                    OnFailureListener {
+                        it.localizedMessage?.let { it1 -> Log.d("TAG", it1) }
+                    })
+        } else {
+            firebaseAuth
+                .startActivityForSignInWithProvider( /* activity= */this, provider.build())
+                .addOnSuccessListener {
+                    progressDialog.show()
+                    var email:String?=it.additionalUserInfo?.username
+                   
+                }
+                .addOnFailureListener {
+                    it.localizedMessage?.let { it1 -> Log.d("TAG", it1) }
+                }
+        }
+    }
