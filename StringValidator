@@ -1,0 +1,24 @@
+class FormValidator{
+  static final validCharacters = RegExp(r'^[0-9a-zA-Z]');
+  static String? validate(String value){
+    if(value.isEmpty){
+      return "Field is empty";
+    }
+    else if(value.contains("!")||value.contains("@")||value.contains("#")||
+        value.contains("\$")||value.contains("%")||value.contains("^")||value.contains("&")||
+        value.contains("*")||value.contains("(")||value.contains(")")||
+        value.contains("-")||value.contains("_")||value.contains("=")||value.contains("~")||
+        value.contains("`")||value.contains("/")||value.contains("\\")||
+        value.contains("?")||value.contains(".")||value.contains(",")||value.contains("<")||
+        value.contains(">")||value.contains(":")||value.contains("\"")||
+        value.contains("'")||value.contains("{")||value.contains("}")||
+        value.contains("[")||value.contains("]")||value.contains("|")||value.contains("£")){
+      return "Spacial characters not allowed";
+    }else if(validCharacters.hasMatch(value)){
+      return "Spacial characters not allowed";
+    }
+      else{
+      return null;
+    }
+  }
+}
