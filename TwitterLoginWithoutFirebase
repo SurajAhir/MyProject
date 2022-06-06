@@ -1,0 +1,69 @@
+/*************first implement dependency in your gradle file**************/
+
+implementation 'com.twitter.sdk.android:twitter:3.1.0'
+    implementation 'com.twitter.sdk.android:twitter-core:3.1.0'
+    
+    /**********in string.xml file write this line***********/
+    
+    <string name="com.twitter.sdk.android.CONSUMER_KEY">xWugqm0o2EmNggAsRor3M0OXP</string> //API_KEY
+   <string name="com.twitter.sdk.android.CONSUMER_SECRET">9v4vizvRP42Z21BoHNfbO57gMl5g7ATEJioOiCe7Q2WDfzNyZS</string> //SECRET_KEY
+   
+   /***********in main xml file add this button****************/
+       <com.twitter.sdk.android.core.identity.TwitterLoginButton
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:padding="8dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/login_button_bg"
+        android:id="@+id/login_twiiter_btn"
+        />
+   
+  /**************main activity class initialize this *****************/
+   lateinit var twitterloginButton:TwitterLoginButton
+  super.onCreate(savedInstanceState)
+        Twitter.initialize(this) //add this line before setContentView
+        setContentView(binding.root)
+   twitterloginButton=findViewById(R.id.login_twiiter_btn)
+   
+   
+   /* call this callback on this button*******************/
+    twitterloginButton.callback=object :
+            com.twitter.sdk.android.core.Callback<TwitterSession>() {
+            override fun success(result: Result<TwitterSession>?) {
+                val session = TwitterCore.getInstance().sessionManager.activeSession
+                val authToken = session.authToken
+                val token = authToken.token
+                val secret = authToken.secret
+                getTwitterEmail(session) //for email call this method
+            }
+
+            override fun failure(exception: TwitterException?) {
+Log.d("Email",exception.toString())
+            }
+
+        }
+        
+        
+        /*********for email call this method**************/
+         private fun getTwitterEmail(session: TwitterSession?) {
+        val authClient = TwitterAuthClient()
+        authClient.requestEmail(session, object : Callback<String?>() {
+            override fun success(result: Result<String?>?) {
+                progressDialog.show()
+               Log.d("Email",result?.data.toString())
+                var email=result?.data
+             
+                
+            }
+
+            override fun failure(exception: TwitterException?) {
+                Log.d("Email",exception.toString())
+                progressDialog.dismiss()
+            }
+        })
+
+    }
+    
+    /*************link of github code****************(https://github.com/twitter-archive/twitter-kit-android/wiki/Log-In-with-Twitter)
+    /********and callback url in your link(https://developer.twitter.com/en/portal/projects/1529749751633018880/apps/24381708/auth-settings)
+    (twittersdk://)  //this as it is
