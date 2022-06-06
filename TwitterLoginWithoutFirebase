@@ -67,3 +67,7 @@ Log.d("Email",exception.toString())
     /*************link of github code****************(https://github.com/twitter-archive/twitter-kit-android/wiki/Log-In-with-Twitter)
     /********and callback url in your link(https://developer.twitter.com/en/portal/projects/1529749751633018880/apps/24381708/auth-settings)
     (twittersdk://)  //this as it is
+
+
+/**********for custom button implement this link************/
+https://stackoverflow.com/questions/27267809/using-custom-login-button-with-twitter-fabric
