@@ -70,4 +70,23 @@ Log.d("Email",exception.toString())
 
 
 /**********for custom button implement this link************/
+var  mTwitterAuthClient:TwitterAuthClient= TwitterAuthClient() //initialize this
+ twitterloginBtn.setOnClickListener { //this is custom button
+            mTwitterAuthClient.authorize(this, object : Callback<TwitterSession?>() {
+                override fun success(twitterSessionResult: Result<TwitterSession?>?) {
+                    val session = TwitterCore.getInstance().sessionManager.activeSession
+                    val authToken = session.authToken
+                    val token = authToken.token
+                    val secret = authToken.secret
+                    getTwitterEmail(session)
+                }
+
+                override fun failure(e: TwitterException) {
+                    e.printStackTrace()
+                }
+            })
+        }
+        
+        /***********and in startActivityForResult do this *************/
+         mTwitterAuthClient.onActivityResult(requestCode, resultCode, data)
 https://stackoverflow.com/questions/27267809/using-custom-login-button-with-twitter-fabric
