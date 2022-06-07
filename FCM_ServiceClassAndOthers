@@ -42,16 +42,59 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
-        Notification notification=new Notification.Builder(this,FCM_CHANNEL_ID)
-                .setContentTitle(title).setContentText(message)
-                .setSmallIcon(R.drawable.notification)
+       @SuppressLint("RemoteViewLayout") RemoteViews notificationLayout = new RemoteViews(getPackageName(), R.layout.notification_icon); //for custom notification icon
+        notificationLayout.setTextViewText(R.id.title, title);  // for custom notification title
+        notificationLayout.setTextViewText(R.id.message, message); // for custom notification message
+        Notification notification = new Notification.Builder(this, FCM_CHANNEL_ID)
+                .setSmallIcon(R.drawable.notification)              //.setContentTitle(title).setContentText(message) //if your haven't setted the remoteView
+                .setCustomContentView(notificationLayout)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .build();
-        NotificationManager manager= (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        manager.notify(1002,notification);
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        manager.notify(1002, notification);
     }
 }
+
+/***********create custom notification layout for remoteView*************/
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp"
+    android:orientation="horizontal">
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/profile"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/title"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:text="title"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:id="@+id/message"
+            android:text="message"/>
+    </LinearLayout>
+</LinearLayout>
+
 
 /*****************Manifest File Work**********************/
 
@@ -59,7 +102,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             android:name=".ShowNotification"
             android:exported="true" >
             <intent-filter>
-                <action android:name="com.example.messagingapp_TARGET_NOTIFICATION"></action>   ////register specific activity for notifiClick
+                <action android:name="com.example.messagingapp_TARGET_NOTIFICATION"></action>   ////register specific activity for notificationClick
                 <category android:name="android.intent.category.DEFAULT"></category>
             </intent-filter>
         </activity>
@@ -77,6 +120,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
+            /********in strings.xml write this contente********/
+            -<resources>
+                    <string name="app_name">MessagingApp</string>
+                    <string name="default_notification_channel_id">FCM_Channel</string>
+            </resources>
+            
+            
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/notification" />
@@ -102,5 +152,20 @@ public class App extends Application {
             NotificationManager manager=(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             manager.createNotificationChannel(channel);
         }
+    }
+}
+
+
+/****************api for message send**************/
+https://fcm.googleapis.com/fcm/send
+
+/**********body data that has to sent*********/
+
+{
+    "to":"f0Ogbh_664I:APA91bE8ln0-QZEN65LOYQ6UUHIEDp-nbwqEeQUZtXFb-_aupC7NqE4TkUIIl1od6YjPN-5s-HQecY8lNgFlxHh7xGSTNVh7kSyL0fwApPIck57A8rTa3p-STiNh_CGolH64qCkHveRU",
+    "notification":{
+        "title":"hello this ",
+        "body":"this is notification",
+        "click_action":"com.example.messagingapp_TARGET_NOTIFICATION" //this is the name that you have setted in your manifest file for notification clicked
     }
 }
