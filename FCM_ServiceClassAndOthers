@@ -169,3 +169,9 @@ https://fcm.googleapis.com/fcm/send
         "click_action":"com.example.messagingapp_TARGET_NOTIFICATION" //this is the name that you have setted in your manifest file for notification clicked
     }
 }
+ /*****in header set following *******************/
+ Content-Type:  application/json
+ 
+ Authorization: key="Your firebase Server key"
+
+ 
