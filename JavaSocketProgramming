@@ -1,0 +1,40 @@
+/*************send File*****************/
+import java.net.*;
+import java.io.*;
+class Send{
+public static void main(String sra[]){
+try{
+Socket s=new Socket("localhost",42);
+//ServerSocket sr=new ServerSocket(42);
+DataOutputStream obj=new DataOutputStream(s.getOutputStream());
+obj.writeUTF("SURAJ");
+DataInputStream din=new DataInputStream(s.getInputStream());
+String k=(String)din.readUTF();
+System.out.println(k);
+}
+catch(Exception e){System.out.println(e);}
+}}
+
+
+
+
+/*****************receive file********************/
+import java.net.*;
+import java.io.*;
+class Receive{
+public static void main(String k[]){
+try{
+ServerSocket s=new ServerSocket(42);
+Socket obj=s.accept();
+DataInputStream data=new DataInputStream(obj.getInputStream());
+String val=(String)data.readUTF();
+System.out.println(val);
+String send="hello suraj ahir ";
+DataOutputStream dou=new DataOutputStream(obj.getOutputStream());
+dou.writeUTF(send);
+}
+catch(Exception e){
+System.out.println(e);}
+
+}
+}
