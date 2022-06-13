@@ -1,0 +1,44 @@
+
+Most likely you've faced the issue with View Layer Type. Try this code:
+
+if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+    webSettings.setMixedContentMode(0);
+    webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+} else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+} else {
+    webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+}
+And try also to set hardware acceleration in Manifest:
+
+android:hardwareAccelerated="true"
+
+
+/***********tos show tables in webview****************/
+
+ holder.htmlTextViewDown.setClickableTableSpan(ClickableTableSpanImpl(holder.webViewDown))
+        val drawTableLinkSpan = DrawTableLinkSpan()
+        drawTableLinkSpan.tableLinkText = "[Show table]"
+        holder.htmlTextViewDown.setDrawTableLinkSpan(drawTableLinkSpan)
+        val metrics = DisplayMetrics()
+        holder.htmlTextViewDown.setListIndentPx(metrics.density * 10)
+        
+  /**************create a class named  ClickableTableSpanImpl*******************/
+  
+       class ClickableTableSpanImpl(val webView: WebView) : ClickableTableSpan() {
+
+
+        override fun newInstance(): ClickableTableSpan {
+            return ClickableTableSpanImpl(webView)
+        }
+
+        override fun onClick(widget: View) {
+            val tableHtml = getTableHtml()
+            Log.d("TAG", tableHtml.toString())
+            webView.loadData(tableHtml!!, "text/html", "UTF-8")
+
+        }
+    }
+    
+    /*************in this i used org.sufficientlysecure.htmltextview.HtmlTextView for html parsing*************/
+    
