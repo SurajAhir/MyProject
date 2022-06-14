@@ -1,0 +1,22 @@
+ final Dialog invoicedialog=new Dialog(this);
+        invoicedialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        invoicedialog.setContentView(R.layout.receipt_document); //custom dialog layout
+        invoicedialog.setCancelable(true);
+        Window window = invoicedialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.TOP; //position of dialog
+        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
+        WindowManager.LayoutParams lp=new WindowManager.LayoutParams();
+        lp.copyFrom(invoicedialog.getWindow().getAttributes());
+        lp.width=WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height=WindowManager.LayoutParams.WRAP_CONTENT;
+        invoicedialog.getWindow().setAttributes(lp);
+        Button downloadButton=invoicedialog.findViewById(R.id.download_pdf_btn);
+        invoicedialog.show();
+        downloadButton.setOnClickListener(new View.OnClickListener() { //click listner of the button of layout
+            @Override
+            public void onClick(View v) {
+               //do any task here
+            }
+        });
