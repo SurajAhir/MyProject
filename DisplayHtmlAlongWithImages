@@ -1,0 +1,436 @@
+/*************website link (https://www.geeksforgeeks.org/how-to-display-html-in-textview-along-with-images-in-android/)*********************/
+
+/***************depencencies***************/
+// Picasso library to downloading images 
+implementation 'com.squareup.picasso:picasso:2.71828'
+// Coroutines dependency to put the downloading 
+process in background thread implementation 
+'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
+
+/**********Add some colors in the colors.xml file************/
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="colorPrimary">#0F9D58</color>
+	<color name="colorPrimaryDark">#0F9D58</color>
+	<color name="colorAccent">#03DAC5</color>
+	<color name="Grey">#878585</color>
+</resources>
+
+
+/************activity_main.xml*****************/
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="16dp"
+	tools:context=".MainActivity">
+
+
+	<!-- Edittext to take input for this sample app,
+		for real app you will not need this -->
+	<EditText
+		android:id="@+id/editor"
+		android:layout_width="0dp"
+		android:layout_height="40dp"
+		app:layout_constraintEnd_toStartOf="@+id/display_html"
+		app:layout_constraintHorizontal_bias="0.0"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<!-- Button to trigger an event to display html/Rich text-->
+	<Button
+		android:id="@+id/display_html"
+		android:layout_width="100dp"
+		android:layout_height="50dp"
+		android:text="Display Html"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<!-- Scroll View for smooth scrolling -->
+	<ScrollView
+		android:layout_width="0dp"
+		android:layout_height="0dp"
+		android:layout_marginTop="16dp"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/editor">
+
+		<!-- Text View in which you will display the html after
+			processing the input-->
+		<TextView
+			android:id="@+id/html_viewer"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+		</TextView>
+		
+	</ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+/*************************Create a Kotlin class ImageGetter.kt********************/
+import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.text.Html
+import android.widget.TextView
+import com.squareup.picasso.Picasso
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+// Class to download Images which extends [Html.ImageGetter]
+class ImageGetter(
+	private val res: Resources,
+	private val htmlTextView: TextView
+) : Html.ImageGetter {
+
+	// Function needs to overridden when extending [Html.ImageGetter] ,
+	// which will download the image
+	override fun getDrawable(url: String): Drawable {
+		val holder = BitmapDrawablePlaceHolder(res, null)
+
+		// Coroutine Scope to download image in Background
+		GlobalScope.launch(Dispatchers.IO) {
+			runCatching {
+
+				// downloading image in bitmap format using [Picasso] Library
+				val bitmap = Picasso.get().load(url).get()
+				val drawable = BitmapDrawable(res, bitmap)
+
+				// To make sure Images don't go out of screen , Setting width less
+				// than screen width, You can change image size if you want
+				val width = getScreenWidth() - 150
+
+				// Images may stretch out if you will only resize width,
+				// hence resize height to according to aspect ratio
+				val aspectRatio: Float =
+					(drawable.intrinsicWidth.toFloat()) / (drawable.intrinsicHeight.toFloat())
+				val height = width / aspectRatio
+				drawable.setBounds(10, 20, width, height.toInt())
+				holder.setDrawable(drawable)
+				holder.setBounds(10, 20, width, height.toInt())
+				withContext(Dispatchers.Main) {
+					htmlTextView.text = htmlTextView.text
+				}
+			}
+		}
+		return holder
+	}
+
+	// Actually Putting images
+	internal class BitmapDrawablePlaceHolder(res: Resources, bitmap: Bitmap?) :
+		BitmapDrawable(res, bitmap) {
+		private var drawable: Drawable? = null
+
+		override fun draw(canvas: Canvas) {
+			drawable?.run { draw(canvas) }
+		}
+
+		fun setDrawable(drawable: Drawable) {
+			this.drawable = drawable
+		}
+	}
+
+	// Function to get screenWidth used above
+	fun getScreenWidth() =
+		Resources.getSystem().displayMetrics.widthPixels
+}
+
+
+/****************************Working with MainActivity.kt file**********************/
+
+class MainActivity : AppCompatActivity() {
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		setContentView(R.layout.activity_main)
+
+		// Click Listener to listener button click events.
+		// display_html is button id from activity_main.xml
+		// You don't need to get reference to it because kotlin
+		// provides synthetic import and
+		// We are gonna use for the same for rest of Views
+		display_html.setOnClickListener {
+			if (editor.text.isNotEmpty()) {
+				displayHtml(editor.text.toString())
+			}
+		}
+	}
+}
+
+
+/*************************Create a function displayHtml()******************/
+private fun displayHtml(html: String) {
+	
+	// Creating object of ImageGetter class you just created
+	val imageGetter = ImageGetter(resources, html_viewer)
+	
+	// Using Html framework to parse html
+	val styledText=HtmlCompat.fromHtml(html,
+										HtmlCompat.FROM_HTML_MODE_LEGACY,
+										imageGetter,null)
+		
+	// to enable image/link clicking
+	html_viewer.movementMethod = LinkMovementMethod.getInstance()
+		
+	// setting the text after formatting html and downloading and setting images
+	html_viewer.text = styledText
+}
+
+/*****************The images are now loading but you can see, for the blockquote part, there is the plain ugly blue line. We are now gonna fix that. ****************
+**************  Create a Kotlin class QuoteSpanClass.kt*****************************/
+
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.text.Layout
+import android.text.style.LeadingMarginSpan
+import android.text.style.LineBackgroundSpan
+
+class QuoteSpanClass(
+	private val backgroundColor: Int,
+	private val stripeColor: Int,
+	private val stripeWidth: Float,
+	private val gap: Float
+) : LeadingMarginSpan, LineBackgroundSpan {
+	
+	// Margin for the block quote tag
+	override fun getLeadingMargin(first: Boolean): Int {
+		return (stripeWidth + gap).toInt()
+	}
+
+	// this function draws the margin.
+	override fun drawLeadingMargin(
+		c: Canvas,
+		p: Paint,
+		x: Int,
+		dir: Int,
+		top: Int,
+		baseline: Int,
+		bottom: Int,
+		text: CharSequence,
+		start: Int,
+		end: Int,
+		first: Boolean,
+		layout: Layout
+	) {
+
+		val style = p.style
+		val paintColor = p.color
+		p.style = Paint.Style.FILL
+		p.color = stripeColor
+
+		// Creating margin according to color and stripewidth it recieves
+		// Press CTRL+Q on function name to read more
+		c.drawRect(x.toFloat(), top.toFloat(), x + dir * stripeWidth, bottom.toFloat(), p)
+		p.style = style
+		p.color = paintColor
+	}
+
+	override fun drawBackground(
+		c: Canvas,
+		p: Paint,
+		left: Int,
+		right: Int,
+		top: Int,
+		baseline: Int,
+		bottom: Int,
+		text: CharSequence,
+		start: Int,
+		end: Int,
+		lnum: Int
+	) {
+		val paintColor = p.color
+		p.color = backgroundColor
+
+		// It draws the background on which blockquote text is written
+		c.drawRect(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat(), p)
+		p.color = paintColor
+	}
+}
+
+
+/******************* Working with MainActivity.kt file*******************/
+import android.os.Bundle
+import android.text.Spannable
+import android.text.method.LinkMovementMethod
+import android.text.style.QuoteSpan
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
+import kotlinx.android.synthetic.main.activity_main.*
+
+class MainActivity : AppCompatActivity() {
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		setContentView(R.layout.activity_main)
+
+		// Click Listener to listener button click events.
+		// display_html is button id from activity_main.xml
+		// You don't need to get reference to it
+		// because kotlin provides synthetic import and
+		// We are gonna use for the same for rest of Views
+		display_html.setOnClickListener {
+			if (editor.text.isNotEmpty()) {
+				displayHtml(editor.text.toString())
+			}
+		}
+	}
+
+	private fun displayHtml(html: String) {
+		// Creating object of ImageGetter class you just created
+		val imageGetter = ImageGetter(resources, html_viewer)
+
+		// Using Html framework to parse html
+		val styledText =
+			HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY, imageGetter,null)
+
+		replaceQuoteSpans(styledText as Spannable)
+
+		// setting the text after formatting html and downloading and setting images
+		html_viewer.text = styledText
+
+		// to enable image/link clicking
+		html_viewer.movementMethod = LinkMovementMethod.getInstance()
+
+	}
+
+	private fun replaceQuoteSpans(spannable: Spannable)
+	{
+		val quoteSpans: Array<QuoteSpan> =
+			spannable.getSpans(0, spannable.length - 1, QuoteSpan::class.java)
+
+		for (quoteSpan in quoteSpans)
+		{
+			val start: Int = spannable.getSpanStart(quoteSpan)
+			val end: Int = spannable.getSpanEnd(quoteSpan)
+			val flags: Int = spannable.getSpanFlags(quoteSpan)
+			spannable.removeSpan(quoteSpan)
+			spannable.setSpan(
+				QuoteSpanClass(
+					// background color
+					ContextCompat.getColor(this, R.color.colorPrimary),
+					// strip color
+					ContextCompat.getColor(this, R.color.colorAccent),
+					// strip width
+					10F, 50F
+				),
+				start, end, flags
+			)
+		}
+	}
+}
+
+
+/*************************Create a method ImageClick() in the MainActivity.kt file******************************/
+// Function to parse image tags and enable click events
+fun ImageClick(html: Spannable)
+{
+for (span in html.getSpans(0, html.length, ImageSpan::class.java))
+{
+	val flags = html.getSpanFlags(span)
+	val start = html.getSpanStart(span)
+	val end = html.getSpanEnd(span)
+	html.setSpan(object : URLSpan(span.source) {
+		override fun onClick(v: View) {
+				Log.d(TAG, "onClick: url is ${span.source}")
+			}
+}, start, end, flags)
+}
+
+
+/*******************And then call this function from displayHtml() Function before setting the text for html_viewer. Below is the complete code for the MainActivity.kt file. *********************/
+import android.os.Bundle
+import android.text.Spannable
+import android.text.method.LinkMovementMethod
+import android.text.style.ImageSpan
+import android.text.style.QuoteSpan
+import android.text.style.URLSpan
+import android.util.Log
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
+import kotlinx.android.synthetic.main.activity_main.*
+
+private const val TAG="MainActivity"
+
+class MainActivity : AppCompatActivity() {
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		setContentView(R.layout.activity_main)
+
+		// Click Listener to listener button click events.
+		// display_html is button id from activity_main.xml
+		// You don't need to get reference to it
+		// because kotlin provides synthetic import and
+		// We are gonna use for the same for rest of Views
+		display_html.setOnClickListener {
+			if (editor.text.isNotEmpty()) {
+				displayHtml(editor.text.toString())
+			}
+		}
+	}
+
+	private fun displayHtml(html: String) {
+		// Creating object of ImageGetter class you just created
+		val imageGetter = ImageGetter(resources, html_viewer)
+
+		// Using Html framework to parse html
+		val styledText =
+			HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY, imageGetter, null)
+
+		replaceQuoteSpans(styledText as Spannable)
+		ImageClick(styledText as Spannable)
+
+		// setting the text after formatting html and downloading and setting images
+		html_viewer.text = styledText
+
+		// to enable image/link clicking
+		html_viewer.movementMethod = LinkMovementMethod.getInstance()
+
+	}
+
+	private fun replaceQuoteSpans(spannable: Spannable) {
+		val quoteSpans: Array<QuoteSpan> =
+			spannable.getSpans(0, spannable.length - 1, QuoteSpan::class.java)
+
+		for (quoteSpan in quoteSpans) {
+			val start: Int = spannable.getSpanStart(quoteSpan)
+			val end: Int = spannable.getSpanEnd(quoteSpan)
+			val flags: Int = spannable.getSpanFlags(quoteSpan)
+			spannable.removeSpan(quoteSpan)
+			spannable.setSpan(
+				QuoteSpanClass(
+					// background color
+					ContextCompat.getColor(this, R.color.colorPrimary),
+					// strip color
+					ContextCompat.getColor(this, R.color.colorAccent),
+					// strip width
+					10F, 50F
+				),
+				start, end, flags
+			)
+		}
+	}
+
+	// Function to parse image tags and enable click events
+	fun ImageClick(html: Spannable) {
+		for (span in html.getSpans(0, html.length, ImageSpan::class.java)) {
+			val flags = html.getSpanFlags(span)
+			val start = html.getSpanStart(span)
+			val end = html.getSpanEnd(span)
+			html.setSpan(object : URLSpan(span.source) {
+				override fun onClick(v: View) {
+					Log.d(TAG, "onClick: url is ${span.source}")
+				}
+			}, start, end, flags)
+		}
+	}
+}
