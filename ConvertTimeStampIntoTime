@@ -1,42 +1,43 @@
-var lastActivityDate = Date((conversation.start_date as Long) * 1000)
+private fun convertTimeIntoSimpleMinuts(lastActivityDate: Date) {
         var currentTime = Date(System.currentTimeMillis())
+        Log.d("TAG", "year ${currentTime.month} and ${lastActivityDate.month}")
         if (currentTime.year == lastActivityDate.year) {
             if (lastActivityDate.month == currentTime.month) {
                 if (lastActivityDate.date == currentTime.date) {
                     if (lastActivityDate.hours == currentTime.hours) {
                         if (currentTime.minutes - lastActivityDate.minutes < 2) {
-                            binding.showAndReplyConversationLastTimeTv.setText("a moment ago")
+                            binding.fragmentUserProfileLastSeenTv.setText("a moment ago")
                         } else {
-                            binding.showAndReplyConversationLastTimeTv.setText("${currentTime.minutes - lastActivityDate.minutes} minuts ago")
+                            binding.fragmentUserProfileLastSeenTv.setText("${currentTime.minutes - lastActivityDate.minutes} minutes ago")
                         }
                     } else if (lastActivityDate.hours < currentTime.hours) {
                         var timeInMinuts =
                             (currentTime.hours - lastActivityDate.hours) * 60 + currentTime.minutes
                         if (timeInMinuts - lastActivityDate.minutes < 60) {
-                            binding.showAndReplyConversationLastTimeTv.setText("${Math.abs(timeInMinuts - lastActivityDate.minutes)} minuts ago")
+                            binding.fragmentUserProfileLastSeenTv.setText("${Math.abs(timeInMinuts - lastActivityDate.minutes)} minutes ago")
                         } else {
-                            binding.showAndReplyConversationLastTimeTv.setText("${currentTime.hours - lastActivityDate.hours} hour ago")
+                            binding.fragmentUserProfileLastSeenTv.setText("${currentTime.hours - lastActivityDate.hours} hour ago")
                         }
                     }
                 } else {
                     if (currentTime.date - lastActivityDate.date < 2) {
-                        binding.showAndReplyConversationLastTimeTv.setText("${currentTime.date - lastActivityDate.date} day ago")
+                        binding.fragmentUserProfileLastSeenTv.setText("${currentTime.date - lastActivityDate.date} day ago")
                     } else {
-                        binding.showAndReplyConversationLastTimeTv.setText("${currentTime.date - lastActivityDate.date} days ago")
+                        binding.fragmentUserProfileLastSeenTv.setText("${currentTime.date - lastActivityDate.date} days ago")
                     }
                 }
             } else {
                 if (currentTime.month - lastActivityDate.month < 2) {
-                    binding.showAndReplyConversationLastTimeTv.setText("${currentTime.month - lastActivityDate.month} month ago")
+                    binding.fragmentUserProfileLastSeenTv.setText("${currentTime.month - lastActivityDate.month} month ago")
                 } else {
-                    binding.showAndReplyConversationLastTimeTv.setText("${currentTime.month - lastActivityDate.month} months ago")
+                    binding.fragmentUserProfileLastSeenTv.setText("${currentTime.month - lastActivityDate.month} months ago")
                 }
             }
-        }
-        else {
-            if ((currentTime.year-100) - (lastActivityDate.year-100) < 2) {
-                binding.showAndReplyConversationLastTimeTv.setText("${(currentTime.year-100) - (lastActivityDate.year-100)} year ago")
+        } else {
+            if ((currentTime.year - 100) - (lastActivityDate.year - 100) < 2) {
+                binding.fragmentUserProfileLastSeenTv.setText("${(currentTime.year - 100) - (lastActivityDate.year - 100)} year ago")
             } else {
-                binding.showAndReplyConversationLastTimeTv.setText("${(currentTime.year-100) - (lastActivityDate.year-100)} years ago")
+                binding.fragmentUserProfileLastSeenTv.setText("${(currentTime.year - 100) - (lastActivityDate.year - 100)} years ago")
             }
         }
+    }
