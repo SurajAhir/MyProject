@@ -3,3 +3,8 @@
         holder.date.setText("${DateFormatSymbols().getShortMonths()[date.month]} ${
             simple.format(date)
         }")
+
+
+/******another way********************/
+var registerDate = Date((list.get(position).User.register_date as Long) * 1000)
+        var simpleFormat1 = SimpleDateFormat("dd yyyy")
