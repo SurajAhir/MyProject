@@ -1,0 +1,292 @@
+fun replaceTag(text: String): String {
+        var text1 = text
+        if (text1.contains("<div style=\"text-align: left;\">")) {
+            var d = Jsoup.parse(text).select("div")
+
+            for (k in d) {
+                if (k.toString().contains("<div style=\"text-align: left;\">")) {
+//                    var valu = text1
+//                    valu = valu.substring(valu.indexOf("left;\">") + 7)
+//                    valu = valu.substring(0, valu.indexOf("</div>"))
+                    text1 = text1.replace(
+                        "<div style=\"text-align: left;\">${k.html()}</div>",
+                        "[left]${k.html()}[/left]"
+                    )
+                    text1 = text1.replace("<span style=\"font-size: 15px;\">", "[size=15]")
+                        .replace("</span>", "[/size]")
+                    Log.d("LEFT", k.html())
+                }
+            }
+
+
+        }
+
+        if (text1.contains("<div style=\"text-align: center;\">")) {
+            var d = Jsoup.parse(text).select("div")
+            for (k in d) {
+                if (k.toString().contains("<div style=\"text-align: center;\">")) {
+//                    var valu = text1
+//                    valu = valu.substring(valu.indexOf("center;\">") + 9)
+//                    valu = valu.substring(0, valu.indexOf("</div>"))
+                    text1 = text1.replace(
+                        "<div style=\"text-align: center;\">${k.html()}</div>",
+                        "[center]${k.html()}[/center]"
+                    )
+                    text1 = text1.replace("<span style=\"font-size: 15px;\">", "[size=15]")
+                        .replace("</span>", "[/size]")
+                    Log.d("CENTER", k.html())
+                }
+            }
+
+        }
+
+        if (text1.contains("<div style=\"text-align: right;\">")) {
+
+            var d = Jsoup.parse(text).select("div")
+            for (k in d) {
+                if (k.toString().contains("<div style=\"text-align: right;\">")) {
+                    text1 = text1.replace(
+                        "<div style=\"text-align: right;\">${k.html()}</div>",
+                        "[right]${k.html()}[/right]"
+                    )
+                    text1 = text1.replace("<span style=\"font-size: 15px;\">", "[size=15]")
+                        .replace("</span>", "[/size]")
+                    Log.d("RIGHT", k.html())
+                }
+            }
+
+
+        }
+
+        if (text1.contains("<div>")) {
+            var d = Jsoup.parse(text).select("div")
+            for (k in d) {
+                if (k.toString().contains("<div>")) {
+//                    var valu = text1
+//                    valu = valu.substring(valu.indexOf("<div>") + 5)
+//                    valu = valu.substring(0, valu.indexOf("</div>"))
+                    text1 = text1.replace(
+                        "<div>${k.html()}</div>",
+                        "${k.html()}"
+                    )
+                    text1 = text1.replace("<span style=\"font-size: 15px;\">", "[size=15]")
+                        .replace("</span>", "[/size]")
+                    Log.d("DIV", k.html())
+                }
+            }
+        }
+        if (text1.contains("<ul>")) {
+            text1 = text1.replace("<li>", "[li]").replace("</li>", "[/li]").replace("<ul>", "[ul]")
+                .replace("</ul>", "[/ul]")
+            /* var ul=Jsoup.parse(text).select("ul")
+             for (u in ul){
+                 var li=u.select("li")
+                 for (l in li){
+                     Log.d("OLD",l.toString())
+                     if(l.toString().contains("<li style=\"text-align: center;\">")){
+                         var listring=l.html()
+                         var oldstring="${l.toString()}".replace("</li>","[/li]")
+                         text1=text1.replace(oldstring,"[center][li]${listring}[/li][/center]")
+                     }
+                     if(l.toString().contains("<li style=\"text-align: right;\">")){
+                         var listring=l.html()
+                         var oldstring="${l.toString()}".replace("</li>","[/li]")
+                         text1=text1.replace(oldstring,"[right][li]${listring}[/li][/right]")
+                     }
+                     if(l.toString().contains("<li style=\"text-align: left;\">")){
+                         var listring=l.html()
+                         var oldstring="${l.toString()}".replace("</li>","[/li]")
+                         text1=text1.replace(oldstring,"[left][li]${listring}[/li][/left]")
+                     }
+                 }
+             }*/
+
+        }
+        if (text1.contains("<ol>")) {
+            text1 = text1.replace("<li>", "[li]").replace("</li>", "[/li]").replace("<ol>", "[ol]")
+                .replace("</ol>", "[/ol]")
+            /* var ul=Jsoup.parse(text).select("ol")
+             for (u in ul){
+                 var li=u.select("li")
+                 for (l in li){
+                     Log.d("OLD",l.toString())
+                     if(l.toString().contains("<li style=\"text-align: center;\">")){
+                         var listring=l.html()
+                         var oldstring="${l.toString()}".replace("</li>","[/li]")
+                         text1=text1.replace(oldstring,"[center][li]${listring}[/li][/center]")
+                     }
+                     if(l.toString().contains("<li style=\"text-align: right;\">")){
+                         var listring=l.html()
+                         var oldstring="${l.toString()}".replace("</li>","[/li]")
+                         text1=text1.replace(oldstring,"[right][li]${listring}[/li][/right]")
+                     }
+                     if(l.toString().contains("<li style=\"text-align: left;\">")){
+                         var listring=l.html()
+                         var oldstring="${l.toString()}".replace("</li>","[/li]")
+                         text1=text1.replace(oldstring,"[left][li]${listring}[/li][/left]")
+                     }
+                 }
+             }*/
+
+        }
+
+        if (text1.contains("<a href=")) {
+            var element = Jsoup.parse(text).select("a")
+            for (e in element) {
+                Log.d("AREF", e.attributes().toString())
+                var link =
+                    e.toString().replace("<a", "[url=").replace(" href=\"", "").replace("\">", "]")
+                        .replace("</a>", "[/url]")
+                text1 = text1.replace(e.toString(), link)
+            }
+        }
+        text1 = text1.replace("<b>", "[b]").replace("<i>", "[i]").replace("</b>", "[/b]")
+            .replace("</i>", "[/i]")
+            .replace("<u>", "[u]").replace("</u>", "[/u]").replace("&nbsp;", " ")
+            .replace(" style=\"\"", "")
+            .replace("<font size=\"1\">", "[size=12]").replace("<font size=\"2\">", "[size=16]")
+            .replace("<font size=\"3\">", "[size=18]").replace("<font size=\"4\">", "[size=22]")
+            .replace("<font size=\"4\">", "[size=24]").replace("<font size=\"5\">", "[size=26]")
+            .replace("<font size=\"6\">", "[size=28]").replace("<font size=\"7\">", "[size=32]")
+            .replace("</font>", "[/size]").replace(" style=\"font-size: large;\"", "")
+            .replace(" style=\"font-size: x-large;\"", "")
+            .replace(" style=\"font-size: x-small;\"", "")
+            .replace(" style=\"font-size: small;\"", "")
+            .replace("<span style=\"font-size: 15px;\">", "[size=2]").replace("</span>", "[/size]")
+            .replace("<br>", "\\n")
+            .replace("<li style=\"text-align: right;\">", "[li]")
+            .replace("<li style=\"text-align: center;\">", "[li]")
+            .replace("<li style=\"text-align: left;\">", "[li]")
+
+        if (fontSize.size > 0) {
+            for (i in 0..fontSize.size - 1) {
+                if (text1.contains("<font size=\"${fontSize.get(i)}\" style=\"font-weight: bold;\">")) {
+                    var d = Jsoup.parse(text).select("font")
+                    for (k in d) {
+                        if (k.toString()
+                                .contains("<font size=\"${fontSize.get(i)}\" style=\"font-weight: bold;\">")
+                        ) {
+                            var value = k.text()
+                            var exp = "[size=${fontSize.get(i)}][b]${value}[/b][/size]"
+                            text1 = text1.replace(
+                                "<font size=\"${fontSize.get(i)}\" style=\"font-weight: bold;\">$value[/size]",
+                                exp
+                            )
+                        }
+                    }
+                }
+
+                if (text1.contains("<font size=\"${fontSize.get(i)}\" style=\"font-style: italic;\">")) {
+                    var d = Jsoup.parse(text).select("font")
+                    for (k in d) {
+                        if (k.toString()
+                                .contains("<font size=\"${fontSize.get(i)}\" style=\"font-style: italic;\">")
+                        ) {
+                            var value = k.text()
+                            var exp = "[size=${fontSize.get(i)}][i]${value}[/i][/size]"
+                            text1 = text1.replace(
+                                "<font size=\"${fontSize.get(i)}\" style=\"font-style: italic;\">$value[/size]",
+                                exp
+                            )
+                        }
+                    }
+                }
+
+                if (text1.contains("<font size=\"${fontSize.get(i)}\" style=\"font-style: underline;\">")) {
+                    var d = Jsoup.parse(text).select("font")
+                    for (k in d) {
+                        if (k.toString()
+                                .contains("<font size=\"${fontSize.get(i)}\" style=\"font-style: underline;\">")
+                        ) {
+                            var value = k.text()
+                            var exp = "[size=${fontSize.get(i)}][u]${value}[/u][/size]"
+                            text1 = text1.replace(
+                                "<font size=\"${fontSize.get(i)}\" style=\"font-style: underline;\">$value[/size]",
+                                exp
+                            )
+                        }
+                    }
+                }
+            }
+
+        }
+
+        if (text1.contains("<i style=\"text-decoration-line: underline;\">")) {
+            var d = Jsoup.parse(text).select("i")
+            for (k in d) {
+                if (k.toString().contains("<i style=\"text-decoration-line: underline;\">")) {
+                    var value = k.text()
+                    var exp = "[i][u]${value}[/u][/i]"
+                    text1 = text1.replace(
+                        "<i style=\"text-decoration-line: underline;\">$value[/i]",
+                        exp
+                    )
+                }
+            }
+        }
+
+        if (text1.contains("<b style=\"text-decoration-line: underline;\">")) {
+            var d = Jsoup.parse(text).select("i")
+            for (k in d) {
+                if (k.toString().contains("<b style=\"text-decoration-line: underline;\">")) {
+                    var value = k.text()
+                    var exp = "[b][u]${value}[/u][/b]"
+                    text1 = text1.replace(
+                        "<b style=\"text-decoration-line: underline;\">$value[/b]",
+                        exp
+                    )
+                }
+            }
+        }
+
+        if (text1.contains("<div style=\"text-align: center;\">") || text1.contains("<div style=\"text-align: left;\">")
+            || text1.contains("<div style=\"text-align: right;\">")
+        ) {
+            var d = Jsoup.parse(text1).select("div")
+            for (k in d) {
+                if (k.toString().contains("<div style=\"text-align: center;\">")) {
+                    text1 = text1.replace(
+                        "<div style=\"text-align: center;\">${k.html()}</div>",
+                        "[center]${k.html()}[/center]"
+                    )
+                    Log.d("HUM", k.html())
+                }
+                if (k.toString().contains("<div style=\"text-align: right;\">")) {
+                    text1 = text1.replace(
+                        "<div style=\"text-align: right;\">${k.html()}</div>",
+                        "[right]${k.html()}[/right]"
+                    )
+                    Log.d("HUM1", k.html())
+                }
+                if (k.toString().contains("<div style=\"text-align: left;\">")) {
+                    text1 = text1.replace(
+                        "<div style=\"text-align: left;\">${k.html()}</div>",
+                        "[left]${k.html()}[/left]"
+                    )
+                    Log.d("HUM2", k.html())
+                }
+            }
+        }
+
+//        text1 = text1.replace("<div style=\"text-align: left;\">", "[left]")
+//            .replace("</div>", "[/left]")
+        text1 = text1.replace("<b>", "[b]").replace("<i>", "[i]").replace("</b>", "[/b]")
+            .replace("</i>", "[/i]")
+            .replace("<u>", "[u]").replace("</u>", "[/u]").replace("&nbsp;", " ")
+            .replace(" style=\"\"", "")
+            .replace("<font size=\"1\">", "[size=12]").replace("<font size=\"2\">", "[size=16]")
+            .replace("<font size=\"3\">", "[size=18]").replace("<font size=\"4\">", "[size=22]")
+            .replace("<font size=\"4\">", "[size=24]").replace("<font size=\"5\">", "[size=26]")
+            .replace("<font size=\"6\">", "[size=28]").replace("<font size=\"7\">", "[size=32]")
+            .replace("</font>", "[/size]").replace(" style=\"font-size: large;\"", "")
+            .replace(" style=\"font-size: x-large;\"", "")
+            .replace(" style=\"font-size: x-small;\"", "")
+            .replace(" style=\"font-size: small;\"", "")
+            .replace("<span style=\"font-size: 15px;\">", "[size=2]").replace("</span>", "[/size]")
+            .replace("<br>", "\\n")
+            .replace("<li style=\"text-align: right;\">", "[li]")
+            .replace("<li style=\"text-align: center;\">", "[li]")
+            .replace("<li style=\"text-align: left;\">", "[li]").replace("<div>","").replace("</div>","")
+        fontSize.clear()
+        return text1
+    }
