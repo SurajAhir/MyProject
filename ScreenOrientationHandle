@@ -1,0 +1,22 @@
+
+  <activity
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|keyboardHidden"> //write this line in manifest
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
+        
+        
+        /*********overide two methods in activity***************/
+        
+         override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+    }
