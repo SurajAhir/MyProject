@@ -7,6 +7,8 @@ implementation 'com.twitter.sdk.android:twitter:3.1.0'
     
     <string name="com.twitter.sdk.android.CONSUMER_KEY">xWugqm0o2EmNggAsRor3M0OXP</string> //API_KEY
    <string name="com.twitter.sdk.android.CONSUMER_SECRET">9v4vizvRP42Z21BoHNfbO57gMl5g7ATEJioOiCe7Q2WDfzNyZS</string> //SECRET_KEY
+   /********for KEY and SECRET key create a app on Twitter developers console(https://developer.twitter.com/)
+   
    
    /***********in main xml file add this button****************/
        <com.twitter.sdk.android.core.identity.TwitterLoginButton
@@ -65,8 +67,8 @@ Log.d("Email",exception.toString())
     }
     
     /*************link of github code****************(https://github.com/twitter-archive/twitter-kit-android/wiki/Log-In-with-Twitter)
-    /********and callback url in your link(https://developer.twitter.com/en/portal/projects/1529749751633018880/apps/24381708/auth-settings)
-    (twittersdk://)  //this as it is
+    /********and go to this link (https://developer.twitter.com/en/portal/projects/1529749751633018880/apps/24381708/auth-settings) and
+    (twittersdk://)  //add this callback url
 
 
 /**********for custom button implement this link************/
