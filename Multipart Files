@@ -1,0 +1,21 @@
+// create api-------------1st step
+   @Multipart
+    @POST("attachments/")
+    fun postAttachmentFile(
+        @Header("XF-Api-Key") key: String,
+        @Header("XF-Api-User") userId: Int,
+        @Part attachment: MultipartBody.Part,
+        @Part("key") attachmentKey: RequestBody,
+    ): Call<ResponseThread>
+    
+    
+ //  ------------2nd step
+ var uri1 = FileUtils.getPath(context, data?.data) //this is your data(image uri,file uri, etc)
+         
+                var file: File = File(uri1)
+                val requestBody: RequestBody =
+                    RequestBody.create(MediaType.parse("multipart/form-data"), file)
+                val attachment =
+                    MultipartBody.Part.createFormData("attachment", file.getName(), requestBody)
+                var key= RequestBody.create(MediaType.parse("multipart/form-data"),
+                                gettedAttachmentKey)
