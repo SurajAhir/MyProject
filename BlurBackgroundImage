@@ -1,0 +1,44 @@
+1. Open Your project’s build.gradle(Project) file.
+
+2. Add maven { url “https://jitpack.io” } inside the allprojects -> repositories block .
+
+3. Now open build.gradle(Module: app) file
+
+4. Add compile ‘com.github.jgabrielfreitas:BlurImageView:1.0.1’ inside the dependencies block
+
+5. Download image and paste into res -> drawable folder.
+
+6. MainActivity code
+
+ import android.support.v7.app.AppCompatActivity; 
+ import android.os.Bundle; 
+ import com.jgabrielfreitas.core.BlurImageView;
+ public class MainActivity extends AppCompatActivity { 
+ BlurImageView blurImageView;
+ @Override protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ blurImageView = (BlurImageView)findViewById(http://R.id.BlurImageView);
+ blurImageView.setBlur(5); 
+ } }
+ 
+ 7. xml code
+ 
+ <?xml version="1.0" encoding="utf-8"?>
+ <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/app"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ app:context="com.android_examples.blurimageview_android_examplescom.MainActivity">
+ 
+ <com.jgabrielfreitas.core.BlurImageView
+ android:id="@+id/BlurImageView"
+ android:layout_width="match_parent" 
+ android:layout_height="match_parent"
+ android:scaleType="fitXY" 
+ android:layout_alignParentTop="true"
+ android:layout_centerHorizontal="true"
+ android:src="@drawable/nature" />
+ 
+ </RelativeLayout>
+ 
+ 
