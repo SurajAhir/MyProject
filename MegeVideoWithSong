@@ -1,0 +1,26 @@
+
+
+******************add this dependency ***********************
+implementation 'com.arthenica:mobile-ffmpeg-full:4.4'
+
+
+String[] c = {"-i", videoPath.getPath() -->this is your video path
+                            , "-i", pathFile.getPath()-->this is your song path
+                            , "-c:v", "copy", "-c:a", "aac", "-map", "0:v:0", "-map", "1:a:0", "-shortest",
+                            actualVideoPath.getPath() -->this is the path where you want to save it
+                            };
+MergeVideo(c); //call this method
+
+
+//create this method
+private void MergeVideo(String[] co) {
+        FFmpeg.executeAsync(co, new ExecuteCallback() {
+            @Override
+            public void apply(long executionId, int returnCode) {
+                Log.d("TAGA", "return  " + returnCode);
+                Log.d("TAGA", "executionID  " + executionId);
+                Log.d("TAGA", "FFMPEG  " + new FFmpegExecution(executionId, co));
+
+            }
+        });
+    }
