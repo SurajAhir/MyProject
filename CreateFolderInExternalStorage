@@ -1,0 +1,11 @@
+
+
+//*****************In android 11 you can use this pattern
+File mPath=null;
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    mPath= new File(getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DCIM),"/"+System.currentTimeMillis()+".mp3");  //Environment.DIRECTORY_DCIM not change this 
+}
+else
+{
+    mPath= new File(Environment.getExternalStorageDirectory().toString(),"MyCameraApp/"+System.currentTimeMillis()+".mp3");
+}
