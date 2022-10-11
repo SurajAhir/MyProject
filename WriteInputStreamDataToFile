@@ -1,0 +1,39 @@
+
+
+InputStream selectedAudioPath = getResources().openRawResource(R.raw.ik_supna);
+
+//************Create a Folder in external Storage and send it 
+
+    //create a file to merge a song with video
+    private void copyInputStreamToFile(InputStream in, File file) {
+        Log.d("TAGA","AYA");
+        OutputStream out = null;
+
+        try {
+            out = new FileOutputStream(file);
+            byte[] buf = new byte[1024];
+            int len;
+            while((len=in.read(buf))>0){
+                out.write(buf,0,len);
+                Log.d("TAGA","data" +len);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            Log.d("TAGA","Exepation "+e.getMessage());
+        }
+        finally {
+            // Ensure that the InputStreams are closed even if there's an exception.
+            try {
+                if ( out != null ) {
+                    out.close();
+                }
+
+                in.close();
+            }
+            catch ( IOException e ) {
+                e.printStackTrace();
+                Log.d("TAGA","Exepation "+e.getMessage());
+            }
+        }
+    }
