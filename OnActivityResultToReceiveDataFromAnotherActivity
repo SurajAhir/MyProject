@@ -1,0 +1,48 @@
+
+// simple activity code
+
+//Call your custom dialog activity using intent
+
+int REQUEST_CODE=101;
+Intent intent = new Intent(Activity.this,
+                    CustomDialogActivity.class);
+            startActivityForResult(intent , REQUEST_CODE); 
+            
+           
+           
+           
+//Now use onActivityResult to retrieve the result
+
+@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        try {
+            super.onActivityResult(requestCode, resultCode, data);
+
+            if (requestCode == REQUEST_CODE  && resultCode  == RESULT_OK) {
+
+                String requiredValue = data.getStringExtra("key");
+            }
+        } catch (Exception ex) {
+            Toast.makeText(Activity.this, ex.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
+
+    }           
+    
+    
+   
+   //Return The Result:
+   Intent intent = getIntent();
+intent.putExtra("key", value);
+setResult(RESULT_OK, intent);
+finish();
+
+//////////////in recyclerview use this method for return data//////////////
+
+                            Intent intent=new Intent();
+                            intent.putExtra("key","value");
+                           if (context instanceof Activity)  //your currunt activity
+                           {
+                               ((Activity) context).setResult(Activity.RESULT_OK, intent);
+                               ((Activity) context).finish(); //for finish the currunt activity
+                           }
