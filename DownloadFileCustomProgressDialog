@@ -1,0 +1,111 @@
+//Use this code for download with executor service:
+
+//in onCreate :
+
+ProgressBar progressBar;
+
+@Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreat`enter code here`e(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        progressBar = findViewById(R.id.progressbar);
+
+    
+    downloading();
+    }
+    
+    
+    
+    //method for downloading
+    
+    private void downloading() {
+progressBar.setVisibility(View.VISIBLE);
+
+
+ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+Handler handler = new Handler(Looper.getMainLooper());
+
+executor.execute(new Runnable() {
+
+    int count;
+
+    @Override
+    public void run() {
+
+        //Background work here
+        try {
+
+            // put your url.this is sample url.
+            URL url = new URL("http://techslides.com/demos/sample-videos/small.mp4");
+            URLConnection conection = url.openConnection();
+            conection.connect();
+
+      
+
+            int lenghtOfFile = conection.getContentLength();
+
+            // download the file
+
+            InputStream input = conection.getInputStream();
+
+            //catalogfile is your destenition folder
+            OutputStream output = new FileOutputStream(catalogfile + "video.mp4");
+
+
+            byte data[] = new byte[1024];
+
+            long total = 0;
+
+            while ((count = input.read(data)) != -1) {
+                total += count;
+                // publishing the progress....
+
+
+                publishProgress(Integer.valueOf("" + (int) ((total * 100) / lenghtOfFile)));
+
+                // writing data to file
+                output.write(data, 0, count);
+            }
+
+            // flushing output
+            output.flush();
+
+            // closing streams
+            output.close();
+            input.close();
+
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    //UI Thread work here
+                    progressBar.setVisibility(View.GONE);
+
+                }
+            });
+        } catch (Exception e) {
+
+        }
+    }
+});
+}
+
+
+//update progressbar
+
+    private void publishProgress(Integer... progress) {
+
+     progressBar.setProgress(progress[0]);
+
+    }
+    
+    
+    //xml code
+    
+    <ProgressBar
+    android:max="100"
+    style="?android:attr/progressBarStyleHorizontal"
+    android:visibility="invisible"
+    android:id="@+id/progressbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"/>
