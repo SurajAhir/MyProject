@@ -1,0 +1,21 @@
+  Bitmap bMap = ThumbnailUtils.createVideoThumbnail(file, MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
+        String fileN = "thumbnail" + UUID.randomUUID().toString().substring(0, 10) + ".jpg";
+        File filename = new File(getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) +"/" + "SelfieraTemp");
+        try {
+            if(!filename.isDirectory()){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Files.createDirectory(filename.toPath());
+                }else{
+                    filename.mkdirs();
+                }
+            }
+            File destfile=new File(filename.getAbsolutePath()+"/"+fileN);
+            if (!destfile.isFile()) {
+                destfile.createNewFile();
+            }
+            Log.d("Thumbnail", destfile.toString());
+
+            FileOutputStream fos = new FileOutputStream(destfile);
+            bMap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
