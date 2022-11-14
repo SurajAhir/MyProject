@@ -1,0 +1,65 @@
+
+1st step add this code in manifest.xml
+<application>
+  ...
+<provider
+            android:name="androidx.core.content.FileProvider"  //use this if it gives error  "android.support.v4.content.FileProvider"
+            android:authorities="com.selfieera.deepak.selfieera.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />  //create this file
+        </provider>
+        </application>
+        
+step 2nd create file named provider_paths.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <external-cache-path
+        name="my_cache"
+        path="." />
+
+    <external-files-path
+        name="external_files"
+        path="Pictures/" />
+
+    <external-files-path
+        name="external_video_files"
+        path="Movies/" />
+
+    <external-path
+        name="external"
+        path="." />
+    <external-files-path
+        name="external_files"
+        path="." />
+    <cache-path
+        name="cache"
+        path="." />
+    <external-cache-path
+        name="external_cache"
+        path="." />
+    <files-path
+        name="files"
+        path="." />
+</paths>
+
+//step 3rd  to share a file add this code
+
+   Uri imageUri = FileProvider.getUriForFile(
+                        MainActivity.this,
+                        "com.selfieera.deepak.selfieera.fileprovider", //(use your app package + ".fileprovider" )
+                        new File(file));
+                startActivity(
+                        Intent.createChooser(
+                                new Intent().setAction(Intent.ACTION_SEND)
+                                        .setType("video/*")
+                                        .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                        .putExtra(
+                                                Intent.EXTRA_STREAM,
+                                                imageUri
+                                        ), "Share Video"
+                        )
+                );
