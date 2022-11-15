@@ -1,0 +1,21 @@
+//first import ffmpeg liabrary to your build.gradle
+
+void AddWatterMarkGif(String inputFile){
+        long sys=System.currentTimeMillis();
+        String outPut= Functions.getStorageDir().getPath()+"/"+sys+"_out.mp4"; //create a folder where you want to save this file
+        String[] cmd = {"-y", "-i", add_your_input_video_file, "-i",add_your_watermark_file_path ,"-ignore_loop", "0","-filter_complex", "[1]scale=120:120 [ovrl], [0:v][ovrl]overlay=5:H-h-5", "-map", "0:a", "-crf", "28",  "-preset", "ultrafast",outPut};
+        FFmpeg.executeAsync(cmd,(executionId, returnCode) -> {
+            if (returnCode == RETURN_CODE_SUCCESS) {
+                Log.i("TAG", "Async command execution completed successfully.");
+                File media = new File(outPut); //this is your watermarkfile
+         
+         
+
+            } else if (returnCode == RETURN_CODE_CANCEL) {
+                Log.i("TAG", "Async command execution cancelled by user.");
+            } else {
+                Log.i("TAG", String.format("Async command execution failed with returnCode=%d.", returnCode));
+            }
+        });
+
+    }
