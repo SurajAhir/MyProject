@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/black"
+    >
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            >
+     
+     
+           
+ //------------------------add data which is scrollable and gone
+ 
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+       
+       
+       //----------------------- add data which collapse over the screen like any appbar
+       
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+
+// --------------------after that add your scrollbale data  here
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_profile"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:padding="6dp"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:background="@color/black">
+
+    </androidx.recyclerview.widget.RecyclerView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
