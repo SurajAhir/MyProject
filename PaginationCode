@@ -1,0 +1,53 @@
+//add some variables
+
+  int page=15;
+    int prevCount=16;
+    private ArrayList<PrivatePost> listPost = new ArrayList<>();  //your main list which pass in your adapter
+    private ArrayList<PrivatePost> main_listPost = new ArrayList<>();
+    
+    //api inside code
+    
+     if(response.body().getPublicPost() !=null ){
+                      if(response.body().getPublicPost().size()>16){
+                          main_listPost.addAll(response.body().getPublicPost());
+                          for(int i=0;i<16;i++){
+                              if(main_listPost.get(i)!=null){
+                                  listPost.add(main_listPost.get(i));
+                              }
+                          }
+                      }else{
+                          listPost.addAll(response.body().getPublicPost());
+                      }
+                    }
+                    Log.d("TAGA","length "+listPost.size()+" and total size"+response.body().getPublicPost().size());
+                    progressBar.setVisibility(GONE);
+                    userpostAdapter.notifyDataSetChanged();
+            
+      
+// scroll listener inside code
+
+  progressBar.setVisibility(View.VISIBLE);
+                    Log.d("TAGA","scrolling..................");
+                    if(main_listPost.size()>15){
+                        int size=main_listPost.size()-page;
+                        if(size>0){
+                            listPost.clear();
+                            for(int i=0;i<prevCount+15;i++){
+                                if(i!=main_listPost.size() && main_listPost.get(i)!=null){
+                                    listPost.add(main_listPost.get(i));
+                                }
+                            }
+                            prevCount=prevCount+15;
+                            page=page+15;
+                        }
+
+                    }
+                    Handler handler=new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            userpostAdapter.notifyDataSetChanged();
+                            progressBar.setVisibility(GONE);
+                        }
+                    },2000);
+            
