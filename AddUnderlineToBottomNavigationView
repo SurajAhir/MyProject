@@ -1,0 +1,97 @@
+/*You can do that using a SpannableString with Un
+derlineSpan to the item title when this item is selected by the user by setting OnNavigationItemSelectedListener listener
+to the BottomNavigationView*/
+
+
+BottomNavigationView bottomNavigationView = (BottomNavigationView)
+            findViewById(R.id.bottom_navigation);
+
+
+    underlineMenuItem(bottomNavigationView.getMenu().getItem(0)); // underline the default selected item when the activity is launched
+
+    bottomNavigationView.setOnNavigationItemSelectedListener(
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    removeItemsUnderline(bottomNavigationView); // remove underline from all items
+                    underlineMenuItem(item); // underline selected item
+                    switch (item.getItemId()) {
+                        // handle item clicks
+                    }
+                    return false;
+                }
+            });
+}
+
+private void removeItemsUnderline(BottomNavigationView bottomNavigationView) {
+    for (int i = 0; i <  bottomNavigationView.getMenu().size(); i++) {
+        MenuItem item = bottomNavigationView.getMenu().getItem(i);
+        item.setTitle(item.getTitle().toString());
+    }
+}
+
+private void underlineMenuItem(MenuItem item) {
+    SpannableString content = new SpannableString(item.getTitle());
+    content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+    item.setTitle(content);
+
+}
+
+/*This works exactly if you're using text based items, but in your case you're just using icons in your menu,
+and to resolve this issue; you have to utilize the android:title of
+menu items in menu.xml with white spaces as follows*/
+
+//bottom_nav_menu.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_favorites"
+        android:enabled="true"
+        android:icon="@drawable/ic_favorite_white_24dp"
+        android:title="@string/text_spaces"
+        />
+    <item
+        android:id="@+id/action_schedules"
+        android:enabled="true"
+        android:icon="@drawable/ic_access_time_white_24dp"
+        android:title="@string/text_spaces"
+        />
+    <item
+        android:id="@+id/action_music"
+        android:enabled="true"
+        android:icon="@drawable/ic_audiotrack_white_24dp"
+        android:title="@string/text_spaces"
+       />
+</menu>
+
+
+/*And use &#160; in your text as many times as you need spaces which will reflect on the length of the the line under each item*/
+
+<resources>
+    ...
+    <string name="text_spaces">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</string>
+    
+    
+ // bottomnavigation looks like as below
+ 
+ <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottom_navigation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="@color/black"
+                app:itemIconTint="@color/nav_back"
+                app:itemTextColor="@color/nav_back"
+                app:itemRippleColor="@color/gray_stock"
+                app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+                app:menu="@menu/bottom_navigation_menu" />
+
+
+//where create nav_back.xml file under color section
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:color="#FF9800" />
+    <item android:color="@color/gray_stock"  android:state_checked="false" />
+</selector>
