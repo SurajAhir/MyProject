@@ -1,0 +1,96 @@
+Read Excel Sheet Programatically From Assets Folder in Android
+Hi,
+
+*****************first add this dependency in your app(build.gradle)
+ implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
+    implementation group: 'org.apache.xmlbeans', name: 'xmlbeans', version: '3.1.0'
+    implementation 'javax.xml.stream:stax-api:1.0'
+    implementation 'com.fasterxml:aalto-xml:1.2.2'
+    
+    *******************second add this line in project(build.gradle)
+    maven { url 'https://jitpack.io' }
+
+In one of my Project, I need to read an excel file data which is in assets folder.
+
+
+1) Create Project in Android using Eclipse.
+2) Download poi Java Library or After Downloading take this  poi-3.10-FINAL-20140208.jar file and add to the libs folder and add to Build Path.
+
+3) Place an excel sheet in assets folder in your project.
+
+4) Copy the following code in your activity
+
+MainActivity.java
+public class MainActivity extends ActionBarActivity implements OnClickListener {
+
+ private Button btnReadExcel1;
+ AssetManager assetManager;
+
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+  super.onCreate(savedInstanceState);
+  setContentView(R.layout.activity_main);
+
+  btnReadExcel1 = (Button) findViewById(R.id.btnReadExcel1);
+
+  btnReadExcel1.setOnClickListener(this);
+
+  assetManager = getAssets();
+
+ }
+
+ 
+ @Override
+ public void onClick(View v) {
+
+  if (v.getId() == R.id.btnReadExcel1) {
+
+   readExcelFileFromAssets();
+
+  }
+
+ }
+
+ public void readExcelFileFromAssets() {
+
+  try {
+   // Creating Input Stream
+   /*
+    * File file = new File( filename); FileInputStream myInput = new
+    * FileInputStream(file);
+    */
+
+   InputStream myInput;
+
+                       //  Don't forget to Change to your assets folder excel sheet
+   myInput = assetManager.open("contacts.xls");
+
+   // Create a POIFSFileSystem object
+   POIFSFileSystem myFileSystem = new POIFSFileSystem(myInput);
+
+   // Create a workbook using the File System
+   HSSFWorkbook myWorkBook = new HSSFWorkbook(myFileSystem);
+
+   // Get the first sheet from workbook
+   HSSFSheet mySheet = myWorkBook.getSheetAt(0);
+
+   /** We now need something to iterate through the cells. **/
+   Iterator<Row> rowIter = mySheet.rowIterator();
+
+   while (rowIter.hasNext()) {
+    HSSFRow myRow = (HSSFRow) rowIter.next();
+    Iterator<Cell> cellIter = myRow.cellIterator();
+    while (cellIter.hasNext()) {
+     HSSFCell myCell = (HSSFCell) cellIter.next();
+     Log.e("FileUtils", "Cell Value: " + myCell.toString()+ " Index :" +myCell.getColumnIndex());
+     // Toast.makeText(getApplicationContext(), "cell Value: " +
+     // myCell.toString(), Toast.LENGTH_SHORT).show();
+    }
+   }
+  } catch (Exception e) {
+   e.printStackTrace();
+  }
+
+  return;
+ }
+}
