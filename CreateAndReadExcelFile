@@ -1,0 +1,183 @@
+
+---------go to this reference->https://medium.com/geekculture/creating-an-excel-in-android-cd9c22198619
+
+Downloading the JAR file
+We will be making use of Apache’s POI project in order to achieve our goal. It is completely free and can be downloaded from here.
+
+As per the official documentation:
+
+You can read and write MS Excel files using Java. In addition, you can read and write MS Word and MS PowerPoint files using Java. Apache POI is your Java Excel solution (for Excel 97–2008).
+
+So, not only can we use the POI for generating excel, it can be used for creating MS Word and MS Power point as well. However, it is beyond the scope of this article.
+
+Exporting jar as a dependency in Android Studio
+Next, we need to export the JAR as a dependency in Android Studio. I’ve depicted the same in a step-wise manner below:
+
+Step 1: Navigate to the Project Structure on the left
+
+Android file structure
+Step 2: Switch to ‘Project’ form ‘Android’ by selecting the dropdown
+
+Switching to Project view
+Step 3: Select the ‘libs’ folder within the ‘app’ directory
+
+Navigate to libs folder within the Project structure
+Step 4: Copy the downloaded JAR and paste it into ‘libs’ directory
+
+Copy and paste the JAR file into the libs directory
+Step 5: (Most Important) Adding JAR as a library
+
+Right click on the newly added JAR and select the option ‘Add as library’
+Adding it as a library automatically handles adding and compiling the files (‘libs/library_name.jar’) in build.gradle. We don’t need to add it manually.
+
+Thats it! You have now exported the JAR in Android Studio as a library.
+
+Creating an Excel Workbook
+In this section we will be covering a detailed walkthrough of the process of creating an excel workbook.
+
+
+We can try relating the terms in the following way:
+
+Workbook is a collection of sheets.
+Sheet is a collection of rows (and columns).
+Row is a collection of cells.
+So, let’s begin!
+
+Step 1: Creating a new ‘Workbook’
+
+
+Step 2: Creating a new ‘Sheet’
+
+
+Step 3: Creating a new ‘Row’
+
+
+Step 4: Creating a new ‘Cell’ and assigning ‘style’ to it
+
+
+Initially, we declare a variable ‘cell’ of type ‘Cell’
+Next, we to create a ‘CellStyle’ which can be assigned to any cell (for example, the Header row in an excel sheet) and customise it depending on the requirements. Such as, setting the foreground colour, alignment etc.
+Next, we create a new ‘cell’ and assign it to a ‘Row’
+Lastly, we set value and style to the cell.
+Combining Steps 1 to 4:
+
+
+The above code will generate a single row having 4 cells, which will look something like this:
+
+
+Before we proceed with the next steps, make sure that you have added the necessary permissions in the ‘Manifest’
+
+
+Importing data (Reading) from an Excel Workbook
+In this section, we will try to understand the process of reading data from an excel workbook.
+
+By the end of this section, we will be able to read data from the excel workbook displayed below i.e, the exported contact list from an Android device (and let’s say, display it in an android device).
+
+
+Step 1: Access Excel file from storage
+File file = new File(context.getExternalFilesDir(null), fileName); // aur to get stream from resourses folder-> InputStream inputStream=getClassLoader().getResourceAsStream("fuel_gravity_density_formula.xls");
+FileInputStream fileInputStream = null;
+
+Step 2: Create an Instance having reference to .xls file
+fileInputStream = new FileInputStream(file);
+workbook = new HSSFWorkbook(fileInputStream);
+
+Step 3: Fetch sheet at desired index from workbook
+// Fetch first sheet (index: 0)
+sheet = workbook.getSheetAt(0);
+
+Step 4: Iterate through rows and cells in the sheet
+// Iterate through each row
+for (Row row : sheet) {
+  if (row.getRowNum() > 0) {
+    // Iterate through all the cells in a row (Excluding header row)
+    Iterator<Cell> cellIterator = row.cellIterator();
+
+    while (cellIterator.hasNext()) {
+      Cell cell = cellIterator.next();
+      
+      // Check cell type and format accordingly
+      switch (cell.getCellType()) {
+        case Cell.CELL_TYPE_NUMERIC:
+          // Print cell value
+          System.out.println(cell.getNumericCellValue());
+          break;
+          
+        case Cell.CELL_TYPE_STRING:
+          System.out.println(cell.getStringCellValue());
+          break;
+      }
+    }
+  }
+}
+
+
+
+
+Iterate through each row in the sheet.
+Iterate each cell in a row using ‘row.cellIterator()’
+Check the cell type for each cell and format the data accordingly.
+Print the value (refer the GitHub link for the application here where i’ve stored data in a list)
+Combining Steps 1 to 4:
+
+
+Exporting data (Writing) into an Excel Workbook
+In this section, we will understand the mechanism to export data from an Android application (let’s say, the list of all contacts in a mobile phone) into an excel workbook and storing it in external storage.
+
+Well, this is really simple since we already looked into the mechanism of generating a workbook before. All we need to do here is read data from any data source (eg: List) and cast it appropriately into cells and rows in order to generate the excel sheet shown below:
+
+
+However, the complete code for writing data into an excel can be found at the end of this section.
+
+Step 1: Fill data from list into Excel
+public static void exportDataIntoExcel(List<ContactResponse> dataList) {
+  for (int i = 0; i < dataList.size(); i++) {
+    // Create a New Row for every new entry in list
+    Row rowData = sheet.createRow(i + 1);
+
+    // Create Cells for each row
+    cell = rowData.createCell(0);
+    cell.setCellValue(dataList.get(i).getFirstName());
+
+    cell = rowData.createCell(1);
+    cell.setCellValue(dataList.get(i).getLastName());
+
+    cell = rowData.createCell(2);
+    cell.setCellValue(dataList.get(i).getPhoneNumber());
+
+    cell = rowData.createCell(4);
+    cell.setCellValue(dataList.get(i).getMailId());
+  }
+}
+
+
+
+Step 2: Store Excel in External Storage
+private static boolean storeExcelInStorage(Context context, String fileName) {
+  boolean isSuccess;
+  File file = new File(context.getExternalFilesDir(null), fileName);
+  FileOutputStream fileOutputStream = null;
+
+  try {
+     fileOutputStream = new FileOutputStream(file);
+     workbook.write(fileOutputStream);
+     Log.e(TAG, "Writing file" + file);
+     isSuccess = true;
+  } catch (IOException e) {
+      Log.e(TAG, "Error writing Exception: ", e);
+      isSuccess = false;
+   } catch (Exception e) {
+       Log.e(TAG, "Failed to save file due to Exception: ", e);
+       isSuccess = false;
+   } finally {
+       try {
+           if (null != fileOutputStream) {
+                fileOutputStream.close();
+           }
+        } catch (Exception ex) {
+             ex.printStackTrace();
+        }
+    }
+   return isSuccess;
+ }
+ 
