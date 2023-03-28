@@ -1,0 +1,30 @@
+//Define these globally e.g in your MainActivity class
+  private short touchMoveFactor = 10;
+  private short touchTimeFactor = 200;
+  private PointF actionDownPoint = new PointF(0f, 0f);
+  private long touchDownTime = 0L;
+            
+             @Override
+                public boolean onTouchEvent(MotionEvent event) {
+                    final int action = event.getAction();
+                    switch (action) {
+                     case MotionEvent.ACTION_DOWN: {
+                            actionDownPoint.x = event.getX();
+                            actionDownPoint.y = event.getY();
+                            touchDownTime = System.currentTimeMillis();
+                            break;
+                            }
+                     case MotionEvent.ACTION_UP: {
+                            //on touch released, check if the finger was still close to the point he/she clicked 
+                            boolean isTouchLength = (Math.abs(event.getX() - actionDownPoint.x)+ Math.abs(event.getY() - actionDownPoint.y)) < touchMoveFactor;
+                            boolean isClickTime = System.currentTimeMillis() - touchDownTime < touchTimeFactor;
+        
+                            //if it's been more than 200ms since user first touched and, the finger was close to the same place when released, consider it a click event
+                            //Please note that this is a workaround :D
+                            if (isTouchLength && isClickTime){ 
+                               //call this method on the view, e.g ivPic.performClick();
+                               performClick();}
+                            break;
+                            }
+                     }
+                }
