@@ -1,0 +1,35 @@
+ boolean isStringContainsSpecialChar(String s){
+        Log.d("TAGAA",s);
+        int count = 0;
+
+        ArrayList<Character> a = new ArrayList<Character>();
+//        String b="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+        String b=".,?!#)(/;@':-\"+%&₹~`|•√π÷×¶∆\\}{=°^¢$¥€©®™✓[]<> \\";
+        for(int i=0;i<b.length();i++)
+        {
+            a.add(b.charAt(i));
+
+        }
+
+        // Iterating through the string
+        // using standard length() method
+        for (int i = 0; i < s.length(); i++) {
+            
+            if (a.contains(s.charAt(i))) {
+                // Incrementing the countr for spl
+                // characters by unity
+                count++;
+            }
+
+        }
+        
+        // When there is no special character encountered
+        if (count == 0)
+            // Display the print statement
+           return  false;
+        else
+
+            // Special character/s found then
+            // Display the print statement
+           return true;
+    }
