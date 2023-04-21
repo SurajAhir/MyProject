@@ -1,27 +1,32 @@
 
 
 //*****************In android 11 you can use this pattern
-File mPath=null;
-if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-    mPath= new File(getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DCIM),"/"+System.currentTimeMillis()+".mp3");  //Environment.DIRECTORY_DCIM not change this 
-}
-else
-{
-    mPath= new File(Environment.getExternalStorageDirectory().toString(),"MyCameraApp/"+System.currentTimeMillis()+".mp3");
-}
+  private File getPath() {
+        File mPath = null;
 
-
-________________in android 8_______________________
- fileN = "SelfyDownloader_" + UUID.randomUUID().toString().substring(0, 10) + ".mp4";
-            File filename = new File(getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/" + "SelfieraTemp");
-            if (!filename.isDirectory()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Files.createDirectory(filename.toPath());
-                } else {
-                    filename.mkdirs();
-                }
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            mPath = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "/Selfieera");  //Environment.DIRECTORY_DCIM not change this
+            if (!mPath.exists()) {
+                mPath.mkdir();
             }
-            File destfile = new File(filename.getAbsolutePath() + "/" + fileN);
+        }else{
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mPath= new File(getExternalFilesDir(Environment.DIRECTORY_DCIM),"/Selfieera");  //Environment.DIRECTORY_DCIM not change this
+            }
+            else
+            {
+                mPath= new File(Environment.getExternalStorageDirectory().toString(),"/Selfieera");
+            }
+        }
+
+        return mPath;
+    }
+
+
+________________--------------_______________________
+ fileN = "SelfyDownloader_" + UUID.randomUUID().toString().substring(0, 10) + ".mp4";
+
+            File destfile = new File(getPath().getAbsolutePath() + "/" + fileN);
             if (!destfile.isFile()) {
                 destfile.createNewFile();
             }
