@@ -12,10 +12,16 @@
         }else{
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 mPath= new File(getExternalFilesDir(Environment.DIRECTORY_DCIM),"/Selfieera");  //Environment.DIRECTORY_DCIM not change this
+                 if (!mPath.exists()) {
+                    mPath.mkdir();
+                }
             }
             else
             {
                 mPath= new File(Environment.getExternalStorageDirectory().toString(),"/Selfieera");
+                 if (!mPath.exists()) {
+                    mPath.mkdir();
+                }
             }
         }
 
@@ -27,6 +33,6 @@ ________________--------------_______________________
  fileN = "SelfyDownloader_" + UUID.randomUUID().toString().substring(0, 10) + ".mp4";
 
             File destfile = new File(getPath().getAbsolutePath() + "/" + fileN);
-            if (!destfile.isFile()) {
+            if (!destfile.exists()) {
                 destfile.createNewFile();
             }
