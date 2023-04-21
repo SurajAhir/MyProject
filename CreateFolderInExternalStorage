@@ -9,3 +9,19 @@ else
 {
     mPath= new File(Environment.getExternalStorageDirectory().toString(),"MyCameraApp/"+System.currentTimeMillis()+".mp3");
 }
+
+
+________________in android 8_______________________
+ fileN = "SelfyDownloader_" + UUID.randomUUID().toString().substring(0, 10) + ".mp4";
+            File filename = new File(getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/" + "SelfieraTemp");
+            if (!filename.isDirectory()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Files.createDirectory(filename.toPath());
+                } else {
+                    filename.mkdirs();
+                }
+            }
+            File destfile = new File(filename.getAbsolutePath() + "/" + fileN);
+            if (!destfile.isFile()) {
+                destfile.createNewFile();
+            }
