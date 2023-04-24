@@ -1,0 +1,23 @@
+NestedScrollView.setOnScrollChangeListener(object :NestedScrollView.OnScrollChangeListener{
+            override fun onScrollChange(
+                v: NestedScrollView?,
+                scrollX: Int,
+                scrollY: Int,
+                oldScrollX: Int,
+                oldScrollY: Int,
+            ) {
+                if(v!=null){
+                    if(scrollY==v.getChildAt(0).measuredHeight-v.measuredHeight){
+                        if(MyDataClass.paginationForShowDetails.last_page==MyDataClass.page){
+                            binding.showConversationsProgressBar.visibility=View.GONE
+                        }else{
+                            MyDataClass.page++
+                            binding.showConversationsProgressBar.visibility = View.VISIBLE
+                            fetchDataFromApi(MyDataClass.page)
+                        }
+                    }
+                }else{
+                    binding.showConversationsProgressBar.visibility=View.GONE
+                }
+            }
+        })
