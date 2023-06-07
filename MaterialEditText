@@ -1,0 +1,47 @@
+  <com.google.android.material.textfield.TextInputLayout
+           android:id="@+id/tilPassword"
+           android:layout_width="fill_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="10dp"
+           android:padding="4dp"
+           android:background="@drawable/edittext_bg"
+           android:gravity="center_horizontal"
+           android:textColorHint="@color/black"
+           android:hint="Enter Density"
+           app:hintTextColor="@color/black"
+           >
+
+
+           <androidx.appcompat.widget.AppCompatEditText
+               android:id="@+id/etPassword"
+               android:layout_width="fill_parent"
+               android:layout_height="45dp"
+               android:background="@null"
+               android:inputType="textPassword"
+               android:paddingLeft="5dp"
+               android:paddingBottom="8dp"
+               android:singleLine="true"
+               android:textColor="@color/black"
+               android:textColorHint="@color/black"
+               android:textSize="12sp" />
+       </com.google.android.material.textfield.TextInputLayout>
+       
+       
+       
+       // create editext_bg in drawable folder
+       <?xml version="1.0" encoding="utf-8"?>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid
+        android:color="#FFFDFD"/>
+
+    <corners
+        android:bottomRightRadius="12dp"
+        android:bottomLeftRadius="12dp"
+        android:topLeftRadius="12dp"
+        android:topRightRadius="12dp"/>
+    <stroke
+        android:color="#D8D2D2"
+        android:width="2dp"/>
+</shape>
