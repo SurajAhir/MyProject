@@ -1,0 +1,536 @@
+*************Add this in your manifest file***************
+ <application
+        android:name="com.selfieera.deepak.selfieera.ui.home.fragment.new_video_home_page.ViloApplication" //add this file in which channel is created
+       ......
+......>
+<service
+            android:name=".ui.music.MyMusicService"
+            android:exported="false" />
+
+        <receiver
+            android:name=".ui.music.NotificationReceiver"
+            android:enabled="true" />
+</application>
+
+***********MyMusicService*************
+
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.media.MediaMetadata;
+import android.media.MediaPlayer;
+import android.os.Binder;
+import android.os.Build;
+import android.os.IBinder;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.util.Log;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+
+import com.selfieera.deepak.selfieera.R;
+import com.selfieera.deepak.selfieera.ui.home.fragment.new_video_home_page.ViloApplication;
+
+public class MyMusicService extends Service {
+    private final IBinder binder = new LocalBinder();
+    private MediaSessionCompat mediaSession;
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        mediaSession = new MediaSessionCompat(getBaseContext(), "ExoPlayer");
+        Log.d("MYMUSICSERVICE", "onbind view");
+        return binder;
+    }
+
+    class LocalBinder extends Binder {
+        MyMusicService getService() {
+            return MyMusicService.this;
+        }
+    }
+
+
+    @Override
+    public void onCreate() {
+        Log.d("MYMUSICSERVICE", "oncreate view");
+        super.onCreate();
+
+    }
+
+    void showNotification(int pausePlayBtn) {
+
+
+        Intent intent = new Intent(getBaseContext(), PlayMyMusic.class);
+
+        int flag;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            flag = PendingIntent.FLAG_IMMUTABLE;
+        } else {
+            flag = PendingIntent.FLAG_UPDATE_CURRENT;
+        }
+
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, flag);
+
+        Intent prevIntent = new Intent(getBaseContext(), NotificationReceiver.class).setAction(ViloApplication.PREVIOUS);
+
+        PendingIntent prevPendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, prevIntent, flag);
+
+        Intent playIntent = new Intent(getBaseContext(), NotificationReceiver.class).setAction(ViloApplication.PLAY);
+
+
+        PendingIntent playPendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, playIntent, flag);
+
+        Intent nextIntent = new Intent(getBaseContext(), NotificationReceiver.class).setAction(ViloApplication.NEXT);
+
+        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, nextIntent, flag);
+
+        Intent exitIntent = new Intent(getBaseContext(), NotificationReceiver.class).setAction(ViloApplication.EXIT);
+
+
+        PendingIntent exitPendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, exitIntent, flag);
+
+
+//        MediaMetadata mediaMetadata = new MediaMetadata.Builder().putLong(MediaMetadata.METADATA_KEY_DURATION, -1L).build();
+//        mediaSession.setMetadata(MediaMetadataCompat.fromMediaMetadata(mediaMetadata));
+
+        try {
+            if (MyMusicViewModel.binding != null) {
+                MyMusicViewModel.binding.pauseBtn.setImageResource(pausePlayBtn);
+                MyMusicViewModel.binding.songTitle.setText(MyMusicViewModel.musics.get(MyMusicViewModel.index).getSong_name());
+                new Thread(new PlayMyMusic()).start();
+            }
+            Notification notification = new NotificationCompat.Builder(getBaseContext(), ViloApplication.FCM_CHANNEL_ID)
+                    .setContentIntent(contentIntent)
+                    .setContentTitle(MyMusicViewModel.musics.get(MyMusicViewModel.index).getSong_name())
+                    .setContentText(MyMusicViewModel.musics.get(MyMusicViewModel.index).getSinger_name())
+                    .setSmallIcon(R.mipmap.ic_music)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.default_music_icon))
+                    .setStyle(new androidx.media.app.NotificationCompat.MediaStyle().setShowActionsInCompactView(1, 2, 3, 4).setMediaSession(mediaSession.getSessionToken()))
+                    .setPriority(androidx.core.app.NotificationCompat.PRIORITY_HIGH)
+                    .setVisibility(androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC)
+                    .setOnlyAlertOnce(true)
+                    .addAction(new NotificationCompat.Action(R.drawable.exo_icon_previous, "Previous", prevPendingIntent))
+                    .addAction(new NotificationCompat.Action(pausePlayBtn, "Play", playPendingIntent))
+                    .addAction(new NotificationCompat.Action(R.drawable.exo_icon_next, "Next", nextPendingIntent))
+                    .addAction(new NotificationCompat.Action(R.drawable.ic_close_24, "Exit", exitPendingIntent))
+                    .build();
+            startForeground(13, notification);
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("MYMUSICSERVICE", "onstartcommand");
+        showNotification(R.drawable.exo_icon_pause);
+        return START_STICKY;
+    }
+}
+
+
+
+
+
+
+*******************NotificatinReceiver******************
+
+
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import com.selfieera.deepak.selfieera.R
+import com.selfieera.deepak.selfieera.ui.home.fragment.new_video_home_page.ViloApplication
+import kotlin.system.exitProcess
+
+class NotificationReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) {
+        when (intent?.action) {
+            //only play next or prev song, when music list contains more than one song
+            ViloApplication.PREVIOUS -> if (MyMusicViewModel.musics.size > 1) prevNextSong(
+                increment = false,
+                context = context!!
+            )
+            ViloApplication.PLAY -> if (MyMusicViewModel.mediaPlayer.isPlaying) pauseMusic(context) else context?.let {
+                playMusic(
+                    it
+                )
+            }
+            ViloApplication.NEXT -> if (MyMusicViewModel.musics.size > 1) prevNextSong(
+                increment = true,
+                context = context!!
+            )
+            ViloApplication.EXIT -> {
+                exitService()
+            }
+        }
+    }
+
+    fun exitService() {
+        MyMusicViewModel.myMusicService!!.stopForeground(true)
+        MyMusicViewModel.mediaPlayer!!.release()
+        MyMusicViewModel.myMusicService = null
+//        exitProcess(1)
+    }
+
+    private fun playMusic(context: Context) {
+        MyMusicViewModel.mediaPlayer.start()
+        MyMusicViewModel.myMusicService.showNotification(R.drawable.exo_icon_pause);
+    }
+
+    private fun pauseMusic(context: Context?) {
+        MyMusicViewModel.mediaPlayer.pause();
+        MyMusicViewModel.myMusicService.showNotification(R.drawable.exo_icon_play);
+    }
+
+    private fun prevNextSong(increment: Boolean, context: Context) {
+        if (increment) {
+            MyMusicViewModel.index++
+        } else {
+            MyMusicViewModel.index--
+        }
+        MyMusicViewModel.mediaPlayer.stop()
+        MyMusicViewModel.mediaPlayer.reset()
+        MyMusicViewModel.mediaPlayer.setDataSource(MyMusicViewModel.musics[MyMusicViewModel.index].getAudio_file())
+        MyMusicViewModel.mediaPlayer.prepare()
+        MyMusicViewModel.mediaPlayer.start()
+        MyMusicViewModel.myMusicService.showNotification(R.drawable.exo_icon_pause)
+    }
+}
+
+**************ViloApplication**************
+
+public class ViloApplication extends Application {
+    public static final String FCM_CHANNEL_ID="FCM_CHANNEL_ID";
+    public static final String PLAY="play";
+    public static final String NEXT="next";
+    public static final String PREVIOUS="previous";
+    public static final String EXIT="exit";
+
+@Override
+    public void onCreate() {
+        super.onCreate();
+        instance = this;
+        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
+            NotificationChannel channel=new NotificationChannel(
+                    FCM_CHANNEL_ID,"FCM_Channel", NotificationManager.IMPORTANCE_HIGH
+            );
+            NotificationManager manager=(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(channel);
+        }
+      
+    }
+}
+
+
+*****************MainActivity*****************
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
+
+import android.annotation.SuppressLint;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Binder;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
+import com.airbnb.lottie.L;
+import com.selfieera.deepak.selfieera.R;
+import com.selfieera.deepak.selfieera.databinding.ActivityPlayMyMusicBinding;
+import com.selfieera.deepak.selfieera.ui.home.fragment.new_video_home_page.ViewModelFactory;
+import com.selfieera.deepak.selfieera.ui.home.trendinghashtag_scrollable_video.TrendingScrollableViewModel;
+import com.selfieera.deepak.selfieera.utils.Utils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+
+public class PlayMyMusic extends AppCompatActivity implements Runnable, ServiceConnection {
+
+    boolean mBound = false;
+
+    Musics music;
+    boolean isPlaying = true;
+    ActivityPlayMyMusicBinding binding;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding= DataBindingUtil.setContentView(this,R.layout.activity_play_my_music);
+        MyMusicViewModel.binding=binding;
+        initView();
+        if (MyMusicViewModel.currentId == MyMusicViewModel.previousId) {
+            binding.seekBar.setMax(MyMusicViewModel.mediaPlayer.getDuration());
+            binding.songTitle.setText(MyMusicViewModel.musics.get(MyMusicViewModel.currentId).getSong_name());
+            new Thread(PlayMyMusic.this).start();
+        } else {
+            MyMusicViewModel.previousId = Integer.parseInt(music.getId());
+            if (MyMusicViewModel.mediaPlayer.isPlaying()) {
+                MyMusicViewModel.mediaPlayer.stop();
+                MyMusicViewModel.mediaPlayer.reset();
+            }
+
+            MyMusicViewModel.mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+            try {
+                MyMusicViewModel.mediaPlayer.setDataSource(music.getAudio_file());
+                MyMusicViewModel.mediaPlayer.prepare();
+                MyMusicViewModel.mediaPlayer.start();
+                binding.seekBar.setMax(MyMusicViewModel.mediaPlayer.getDuration());
+                new Thread(PlayMyMusic.this).start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        MyMusicViewModel.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.stop();
+                mp.reset();
+                Log.d("SONGCOMPLETED", "completed" + mp);
+                if (MyMusicViewModel.index >= 0 && MyMusicViewModel.musics.size() > MyMusicViewModel.index) {
+                    MyMusicViewModel.index++;
+
+
+                    MyMusicViewModel.mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+                    try {
+                        binding.songTitle.setText(MyMusicViewModel.musics.get(MyMusicViewModel.index).getSong_name());
+                        MyMusicViewModel.mediaPlayer.setDataSource(MyMusicViewModel.musics.get(MyMusicViewModel.index).getAudio_file());
+                        MyMusicViewModel.mediaPlayer.prepare();
+                        MyMusicViewModel.mediaPlayer.start();
+                       if(MyMusicViewModel.myMusicService!=null){
+                           MyMusicViewModel.myMusicService.showNotification(R.drawable.exo_icon_pause);
+                       }
+                        binding.seekBar.setMax(MyMusicViewModel.mediaPlayer.getDuration());
+                        new Thread(PlayMyMusic.this).start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        binding.pauseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isPlaying) {
+                    binding.pauseBtn.setImageResource(R.drawable.exo_icon_play);
+                    MyMusicViewModel.mediaPlayer.pause();
+                    if(MyMusicViewModel.myMusicService!=null){
+                        MyMusicViewModel.myMusicService.showNotification(R.drawable.exo_icon_play);
+                    }
+                    isPlaying = false;
+                } else {
+                    binding.pauseBtn.setImageResource(R.drawable.exo_icon_pause);
+                    MyMusicViewModel.mediaPlayer.start();
+                    isPlaying = true;
+                    if(MyMusicViewModel.myMusicService!=null){
+                        MyMusicViewModel.myMusicService.showNotification(R.drawable.exo_icon_pause);
+                    }
+                    new Thread(PlayMyMusic.this).start();
+                }
+            }
+        });
+
+        binding.nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MyMusicViewModel.index >= 0 && MyMusicViewModel.musics.size() > MyMusicViewModel.index) {
+                    MyMusicViewModel.index++;
+                    MyMusicViewModel.mediaPlayer.stop();
+                    MyMusicViewModel.mediaPlayer.reset();
+                    binding.pauseBtn.setImageResource(R.drawable.exo_icon_pause);
+                    isPlaying = true;
+                    MyMusicViewModel.mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+                    try {
+                        binding.songTitle.setText(MyMusicViewModel.musics.get(MyMusicViewModel.index).getSong_name());
+                        MyMusicViewModel.mediaPlayer.setDataSource(MyMusicViewModel.musics.get(MyMusicViewModel.index).getAudio_file());
+                        MyMusicViewModel.mediaPlayer.prepare();
+                        MyMusicViewModel.mediaPlayer.start();
+                        binding.seekBar.setMax(MyMusicViewModel.mediaPlayer.getDuration());
+                        if(MyMusicViewModel.myMusicService!=null){
+                            MyMusicViewModel.myMusicService.showNotification(R.drawable.exo_icon_pause);
+                        }
+                        new Thread(PlayMyMusic.this).start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        binding.previousBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MyMusicViewModel.index > 0) {
+                    MyMusicViewModel.index--;
+
+                    MyMusicViewModel.mediaPlayer.stop();
+                    MyMusicViewModel.mediaPlayer.reset();
+                    binding.pauseBtn.setImageResource(R.drawable.exo_icon_play);
+                    isPlaying = false;
+
+
+                    MyMusicViewModel.mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+                    try {
+                        binding.songTitle.setText(MyMusicViewModel.musics.get(MyMusicViewModel.index).getSong_name());
+                        MyMusicViewModel.mediaPlayer.setDataSource(MyMusicViewModel.musics.get(MyMusicViewModel.index).getAudio_file());
+                        MyMusicViewModel.mediaPlayer.prepare();
+                        MyMusicViewModel.mediaPlayer.start();
+                        binding.seekBar.setMax(MyMusicViewModel.mediaPlayer.getDuration());
+                        if(MyMusicViewModel.myMusicService!=null){
+                            MyMusicViewModel.myMusicService.showNotification(R.drawable.exo_icon_pause);
+                        }
+                        new Thread(PlayMyMusic.this).start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        binding.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
+                int x = (int) Math.ceil(progress / 1000f);
+
+                if (x == 0 && MyMusicViewModel.mediaPlayer != null && !MyMusicViewModel.mediaPlayer.isPlaying()) {
+                    seekBar.setProgress(0);
+                }
+
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+
+                if (MyMusicViewModel.mediaPlayer != null && MyMusicViewModel.mediaPlayer.isPlaying()) {
+                    MyMusicViewModel.mediaPlayer.seekTo(seekBar.getProgress());
+                }
+            }
+        });
+
+        binding.backBtn.setOnClickListener((v -> onBackPressed()));
+    }
+
+
+    public void run() {
+
+        int currentPosition = MyMusicViewModel.mediaPlayer.getCurrentPosition();
+        int total = MyMusicViewModel.mediaPlayer.getDuration();
+        Log.d("DURATION", (int) (total / 1000) / 60 + "min" + ((int) (total / 1000) - ((int) (total / 1000) / 60) * 60) + "sec");
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                MyMusicViewModel.binding.totalTime.setText("0" + (int) (total / 1000) / 60 + ":" + ((int) (total / 1000) - ((int) (total / 1000) / 60) * 60 < 10 ? "0"
+                        + ((int) (total / 1000) - ((int) (total / 1000) / 60) * 60) : ((int) (total / 1000) - ((int) (total / 1000) / 60) * 60)));
+            }
+        });
+        while (MyMusicViewModel.mediaPlayer != null && MyMusicViewModel.mediaPlayer.isPlaying() && currentPosition < total) {
+            try {
+                Thread.sleep(1000);
+                currentPosition = MyMusicViewModel.mediaPlayer.getCurrentPosition();
+            } catch (Exception e) {
+                return;
+            }
+
+            MyMusicViewModel.binding.seekBar.setProgress(currentPosition);
+            int finalCurrentPosition = currentPosition;
+            int minutes = (((int) finalCurrentPosition / 1000) % 3600) / 60;
+            int seconds = ((int) finalCurrentPosition / 1000) % 60;
+
+            String timeString = String.format("%02d:%02d", minutes, seconds);
+            runOnUiThread(() ->  MyMusicViewModel.binding.currentTime.setText(timeString));
+            Log.d("DURATION", (int) currentPosition / 1000 + "");
+
+        }
+    }
+
+
+    private void initView() {
+        music = (Musics) getIntent().getSerializableExtra("song");
+        binding.songTitle.setText(music.getSong_name());
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(PlayMyMusic.this, MyMusicService.class);
+        bindService(intent, this, BIND_AUTO_CREATE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unbindService(this);
+        mBound = false;
+    }
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        Log.d("MYMUSICSERVICE","onServiceConnected");
+        if (MyMusicViewModel.myMusicService == null) {
+            MyMusicService.LocalBinder binder = (MyMusicService.LocalBinder) service;
+            MyMusicViewModel.myMusicService = binder.getService();
+            mBound = true;
+        }
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        MyMusicViewModel.myMusicService=null;
+    }
+}
+
+
+***************MyViewModel****************
+
+public class MyMusicViewModel {
+    static List<Musics> musics;
+    static public int index = 0;
+    static MediaPlayer mediaPlayer = new MediaPlayer();
+    static public int previousId=0;
+    static public int currentId=-1;
+    static public MyMusicService myMusicService=null;
+    static public ActivityPlayMyMusicBinding binding=null;
+}
+
+
+**********sending data like this example*********
+
+Intent intent=new Intent(context, PlayMyMusic.class);
+                intent.putExtra("song", musics.get(position)); //music ojbect make your own
+                MyMusicViewModel.index=position;
+                MyMusicViewModel.currentId= Integer.parseInt(musics.get(position).getId()); 
+                context.startActivity(intent);
