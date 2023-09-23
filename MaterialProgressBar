@@ -1,0 +1,11 @@
+ <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/progressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:indicatorColor="@color/white"
+                        app:trackColor="@color/black_400"
+                        android:indeterminate="true"
+                        app:indicatorSize="100dp"
+                        app:trackCornerRadius="5dp"
+                        app:trackThickness="3dp"
+                        />
