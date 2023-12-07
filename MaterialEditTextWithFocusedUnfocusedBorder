@@ -1,0 +1,39 @@
+
+<com.google.android.material.textfield.TextInputLayout
+                style="@style/EditTxtStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:hint="Enter your name"
+                app:boxCornerRadiusBottomEnd="10dp"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusTopStart="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    tools:ignore="KeyboardInaccessibleWidget" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+//add this style in parent layout if it gives you error
+android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar"
+
+// add this style in your style xml
+<style name="EditTxtStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/text_input_box_stroke</item>
+    </style>
+
+//create a text_input_box_stroke color file in res>color folder
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--    TODO play with these around -->
+    <item android:color="@color/fundd_btn_color" android:state_focused="true"/>
+    <item android:color="@color/black_200" android:state_focused="false"/>
+    <item android:color="@color/black_200"/>
+</selector>
