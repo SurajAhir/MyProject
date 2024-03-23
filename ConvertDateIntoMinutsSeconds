@@ -1,0 +1,72 @@
+ public static String convertIntoSimple(String _date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        Date date = null;
+        try {
+            date = format.parse(_date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+
+        int prev_year = Integer.parseInt(String.valueOf(calendar.get(Calendar.YEAR)).substring(2, 4));
+        int prev_month = calendar.get(Calendar.MONTH) + 1;
+        int prev_day = calendar.get(Calendar.DAY_OF_MONTH);
+        int prev_hour = calendar.get(Calendar.HOUR);
+        int prev_minute = calendar.get(Calendar.MINUTE);
+
+        Date now_date = new Date();
+        calendar.setTime(now_date);
+        int now_year = Integer.parseInt(String.valueOf(calendar.get(Calendar.YEAR)).substring(2, 4));
+        int now_month = calendar.get(Calendar.MONTH) + 1;
+        int now_day = calendar.get(Calendar.DAY_OF_MONTH);
+        int now_hour = calendar.get(Calendar.HOUR);
+        int now_minute = calendar.get(Calendar.MINUTE);
+
+
+//        Log.d("TAG", prev_year + " " + prev_month + " " + prev_day + " " + prev_hour + " " + prev_minute);
+//        Log.d("TAG", now_year + " " + now_month + " " + now_day + " " + now_hour + " " + now_minute);
+        String time = "";
+        if (now_year == prev_year) {
+            if (prev_month == now_month) {
+                if (prev_day == now_day) {
+                    if (prev_hour == now_hour) {
+
+                        if ((now_minute - prev_minute) < 2) {
+                            time = "a moment ago";
+                        } else {
+                            time = now_minute - prev_minute + " minutes ago";
+                        }
+                    } else if (prev_hour < now_hour) {
+                        int timeInMinuts = (now_hour - (prev_hour) * 60 + now_minute);
+                        if ((timeInMinuts - prev_minute) < 60) {
+                            time = timeInMinuts - prev_minute + " minutes ago";
+                        } else {
+                            time = now_hour - prev_hour + " hour ago";
+                        }
+                    }
+                } else {
+                    if ((now_day - prev_day) < 2) {
+                        time = now_day - prev_day + " day ago";
+                    } else {
+                        time = now_day - prev_day + " days ago";
+                    }
+                }
+            } else {
+                if ((now_month - prev_month) < 2) {
+                    time = now_month - prev_month + " month ago";
+                } else {
+                    time = now_month - prev_month + " months ago";
+                }
+            }
+        } else {
+            if ((now_year - prev_year) < 2) {
+                time = now_year - prev_year + " year ago";
+            } else {
+                time = now_year - prev_year + " years ago";
+            }
+        }
+
+        return time;
+
+    }
