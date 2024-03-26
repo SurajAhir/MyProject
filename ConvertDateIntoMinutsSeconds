@@ -1,4 +1,4 @@
- public static String convertIntoSimple(String _date) {
+    public static String convertIntoSimple(String _date) {
 //Unparseable date: "19-03-2024 09:05 AM"
         SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.US);
         Date date = null;
@@ -43,9 +43,11 @@
                             time = now_minute - prev_minute + " minutes ago";
                         }
                     } else if (prev_hour < now_hour) {
-                        int timeInMinuts = (now_hour - (prev_hour) * 60 + now_minute);
-                        if ((timeInMinuts - prev_minute) < 60) {
-                            time = timeInMinuts - prev_minute + " minutes ago";
+
+                        int timeInMinuts = ((now_hour*60+now_minute) - (prev_hour* 60 + prev_minute));
+
+                        if (timeInMinuts  < 60) {
+                            time = timeInMinuts  + " minutes ago";
                         } else {
                             time = now_hour - prev_hour + " hour ago";
                         }
