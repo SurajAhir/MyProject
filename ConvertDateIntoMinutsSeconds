@@ -1,13 +1,18 @@
  public static String convertIntoSimple(String _date) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+//Unparseable date: "19-03-2024 09:05 AM"
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.US);
         Date date = null;
+        Calendar calendar = new GregorianCalendar();
         try {
             date = format.parse(_date);
-        } catch (ParseException e) {
+            Log.d("TAG",date.toString());
+            calendar.setTime(date);
+        } catch (Exception e) {
             e.printStackTrace();
+            Log.d("TAG",e.getMessage());
         }
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
+
+
 
         int prev_year = Integer.parseInt(String.valueOf(calendar.get(Calendar.YEAR)).substring(2, 4));
         int prev_month = calendar.get(Calendar.MONTH) + 1;
@@ -24,8 +29,8 @@
         int now_minute = calendar.get(Calendar.MINUTE);
 
 
-//        Log.d("TAG", prev_year + " " + prev_month + " " + prev_day + " " + prev_hour + " " + prev_minute);
-//        Log.d("TAG", now_year + " " + now_month + " " + now_day + " " + now_hour + " " + now_minute);
+        Log.d("TAG", prev_year + " " + prev_month + " " + prev_day + " " + prev_hour + " " + prev_minute);
+        Log.d("TAG", now_year + " " + now_month + " " + now_day + " " + now_hour + " " + now_minute);
         String time = "";
         if (now_year == prev_year) {
             if (prev_month == now_month) {
