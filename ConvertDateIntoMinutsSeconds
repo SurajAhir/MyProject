@@ -1,14 +1,14 @@
 //implementation 'org.ocpsoft.prettytime:prettytime:5.0.4.Final'
 
 
-public String convertIntoSimple(String _date) {
+  public String convertIntoSimple(String _date) {
+
 //Unparseable date: "31-03-2024 09:00 AM"
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.US);
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy hh:mm a", Locale.ENGLISH);
         Date date = null;
         Calendar calendar = new GregorianCalendar();
         try {
             date = format.parse(_date);
-            Log.d(TAG, date.toString());
             calendar.setTime(date);
         } catch (Exception e) {
             e.printStackTrace();
@@ -16,7 +16,9 @@ public String convertIntoSimple(String _date) {
         }
 
 
+        Log.d(TAG,calendar.getTime().toString());
+        Log.d(TAG,calendar.getTimeZone().getDisplayName());
         PrettyTime p = new PrettyTime();
-        return p.format(date);
-        
+        return p.format(calendar.getTime());
+
     }
