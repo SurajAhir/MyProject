@@ -1,0 +1,19 @@
+
+val errorBody = Gson().fromJson(
+                        getErrorBodyString(response.errorBody()),
+                        ErrorModel::class.java
+                    )
+
+//create function
+
+   fun getErrorBodyString(errorBody: ResponseBody?): String? {
+        val peekSource = errorBody?.source()?.peek()
+        return peekSource?.let {
+            val defaultCharset =
+                errorBody?.contentType()?.charset(StandardCharsets.UTF_8) ?: StandardCharsets.UTF_8
+            val charset = it.readBomAsCharset(defaultCharset)
+            // Use the line below in older versions of okhttp
+            // val charset = Util.bomAwareCharset(it, defaultCharset)
+            it.readString(charset)
+        }
+    }
