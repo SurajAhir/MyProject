@@ -165,7 +165,8 @@ public class SongDownloader extends AsyncTask<String, Integer, String> {
                     public void onScanCompleted(String newpath, Uri newuri) {
                         Log.i("ExternalStorage", "Scanned " + newpath + ":");
                         Log.i("ExternalStorage", "-> uri=" + newuri);
-                        listiner.Success(newuri);
+                        listiner.Success(newpath);
+                        progressdialog.dismiss();
                     }
                 });
 
